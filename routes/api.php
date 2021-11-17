@@ -16,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::get('/test',function (){
+    $db = parse_url(env('DATABASE_URL'));
+    print_r($db);
+   return 1;
+});
 Route::post('/login', [RegisterController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 
