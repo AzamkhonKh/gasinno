@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\GeoController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [RegisterController::class, 'login']);
+Route::post('/login', [RegisterController::class, 'login']);
+Route::post('/register', [RegisterController::class, 'register']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function (){
+   Route::get('/user', function (Request $request) {
+       $user = User::where('id', auth()->id())->with(['gisData','role'])->first();
+       return $user;
+   });
+    Route::post('/geo-data',[GeoController::class,'get_geo']);
+
 });

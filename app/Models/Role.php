@@ -6,10 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GISdata extends Model
+class Role extends Model
 {
     use HasFactory, SoftDeletes;
-
-    protected $table = 'GISdatas';
-    protected $fillable = ["user_id", "lat", "long", "label"];
+    public $timestamps = false;
 }

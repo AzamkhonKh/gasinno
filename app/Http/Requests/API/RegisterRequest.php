@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\API;
 
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -11,9 +14,9 @@ class RegisterRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,13 +24,15 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'name' => 'required',
-            'type' => 'required|string',
+            'name' => 'string',
+            'type' => ['required','string', Rule::in(Role::pluck('name')->toArray())],
             'password' => 'string',
-            'c_password' => 'required|same:password',
+            'c_password' => [Rule::requiredIf(function () {
+                return isset($this->type);
+            }), 'same:password'],
         ];
     }
 }
