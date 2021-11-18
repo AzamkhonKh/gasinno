@@ -18,9 +18,14 @@ class RegisterController extends Controller
     {
 
         $input = $request->all();
+        if (!isset($input['name'])) {
+            $input['name'] = $input['type'] . Str::random();
+        }
         $input['role_id'] = Role::where('name', $input['type'])->first()->id;
         $input['password'] = Hash::make($input['password']);
-        $input['ip_address'] = $request->ip();
+        $input['ip_address'] = request()->ip();
+        $input['mac_adress'] = User::getMac();
+
         $user = User::create($input);
         $success['token'] = $user->createToken('gasInno')->plainTextToken;
         $success['name'] = $user->name;
