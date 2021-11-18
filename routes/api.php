@@ -21,6 +21,9 @@ Route::get('/test',function (){
     print_r($db);
    return 1;
 });
+Route::get('/role',function (){
+   return \App\Models\Role::all();
+});
 Route::post('/login', [RegisterController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 
