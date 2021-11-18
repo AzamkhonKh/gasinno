@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/test',function (){
-    $db = parse_url(env('DATABASE_URL'));
+//    $db = parse_url(env('DATABASE_URL'));
+    $db = \request();
     print_r($db);
    return 1;
 });
