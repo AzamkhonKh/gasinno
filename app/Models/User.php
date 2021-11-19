@@ -23,6 +23,7 @@ class User extends Authenticatable
         'role_id',
         'email',
         'password',
+        'balloon_volume',
     ];
 
     /**asa
@@ -54,10 +55,21 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'id')->select('name');
     }
 
+    public function ip(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(IPData::class);
+    }
+
+    public function log(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return IntegrationLog::where('user_id',$this->id)->select('api','request','response')->get();
+    }
+
     public function gisData(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(GISdata::class);
     }
+
     public static function getIp(): ?string
     {
         foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){

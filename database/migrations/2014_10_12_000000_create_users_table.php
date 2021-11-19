@@ -17,10 +17,11 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('email')->nullable()->unique();
-            $table->text('ip_address')->nullable();
-            $table->text('mac_address')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->double('balloon_volume',20,10);
+            $table->boolean('turnOff')->comment('this command needed to turn off, in future should be moved to Redis or another cache memory')->default(false);
+            $table->dateTime('last_login')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

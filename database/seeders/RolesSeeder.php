@@ -14,14 +14,15 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        Role::create([
-            "name" => "bus"
-        ]);
-        Role::create([
-            "name" => "train"
-        ]);
-        Role::create([
-            "name" => "car"
-        ]);
+        $roles = [
+          "administrator",
+          "vehicle",
+          "user",
+        ];
+        foreach ($roles as $role){
+            Role::create([
+                "name" => $role
+            ]);
+        }
     }
 }

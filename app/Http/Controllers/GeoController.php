@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GetGeoRequest;
 use App\Lib\ApiWrapper;
 use App\Models\GISdata;
+use App\Models\IntegrationLog;
+use App\Models\IPData;
 use Illuminate\Http\Request;
 
 class GeoController extends Controller
@@ -15,9 +17,12 @@ class GeoController extends Controller
             $data = $request->all();
             $data['user_id'] = auth()->id();
             $gis = GISdata::create($data);
-            return ApiWrapper::sendResponse(["gis" => $gis], "SUCCESS");
+            IPData::log($request);
+            $res = ApiWrapper::sendResponse(["gis" => $gis], "SUCCESS");
         } catch (\Exception $e) {
-            return ApiWrapper::sendResponse(["message" => $e->getMessage()], "ERROR");
+            $res = ApiWrapper::sendResponse(["message" => $e->getMessage()], "ERROR");
         }
+        IntegrationLog::log($request,$res);
+        return $res;
     }
 }

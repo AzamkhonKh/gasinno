@@ -11,5 +11,12 @@ class GISdata extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'GISdatas';
-    protected $fillable = ["user_id", "lat", "long", "label"];
+    protected $fillable = [
+        "user_id",
+        "lat",
+        "long",
+        "label",
+        "gas",
+        "rele",
+    ];
 }
