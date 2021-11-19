@@ -52,7 +52,7 @@ class User extends Authenticatable
 
     public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id')->select('name');
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     public function ip(): \Illuminate\Database\Eloquent\Relations\HasMany

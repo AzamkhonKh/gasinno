@@ -30,7 +30,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function (){
    Route::get('/user', function (Request $request) {
-       $user = User::where('id', auth()->id())->with(['gisData','role','api','log'])->first();
+       $user = User::where('id', auth()->id())->with(['gisData','role'])->first();
        return $user;
    });
     Route::post('/geo-data',[GeoController::class,'get_geo']);

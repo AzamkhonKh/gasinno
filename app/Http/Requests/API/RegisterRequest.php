@@ -33,7 +33,7 @@ class RegisterRequest extends FormRequest
             'c_password' => [Rule::requiredIf(function () {
                 return isset($this->type);
             }), 'same:password'],
-            'balloon_volume' => ['required'],
+            'balloon_volume' => ['required','numeric'],
         ];
     }
 }

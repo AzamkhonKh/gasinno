@@ -24,10 +24,10 @@ class GetGeoRequest extends FormRequest
     public function rules()
     {
         return [
-            'lat' => 'required|number',
-            'long' => 'required|number',
-            'rele' => 'required|boolean',
-            'gas' => 'required|number',
+            'lat' => ['required','numeric'],
+            'long' => ['required','numeric'],
+            'gas' => ['required','numeric'],
+            'rele' => ['required','numeric','in:1,0'],
             'label' => 'string',
         ];
     }

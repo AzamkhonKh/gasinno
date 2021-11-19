@@ -19,7 +19,7 @@ class RegisterController extends Controller
 {
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
-        $request->add(['mac' => User::getMac()]);
+        $request->request->add(['mac' => User::getMac()]);
         IPData::log($request);
         try {
             $input = $request->all();
@@ -46,7 +46,7 @@ class RegisterController extends Controller
             'name' => $request->get('name'),
             'password' => $request->get('password'),
         );
-        
+
         if (Auth::attempt($credentials)) {
             $request->add(['mac' => User::getMac()]);
             IPData::log($request);
