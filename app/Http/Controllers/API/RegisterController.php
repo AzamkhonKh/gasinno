@@ -31,13 +31,14 @@ class RegisterController extends Controller
             $user = User::create($input);
             $success['token'] = $user->createToken('gasInno')->plainTextToken;
             $success['name'] = $user->name;
-            $res = ApiWrapper::sendResponse($success, "SUCCESS");
+            $res = $success;
+            $msg = "SUCCESS";
         } catch (\Exception $e) {
-            $res = ApiWrapper::sendResponse(["message" => $e->getMessage()], "ERROR");
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
         }
-
-        IntegrationLog::log($request, $res);
-        return $res;
+        IntegrationLog::log($request, [$res,$msg]);
+        return ApiWrapper::sendResponse($res,$msg);
     }
 
     public function login(RegisterRequest $request): \Illuminate\Http\JsonResponse

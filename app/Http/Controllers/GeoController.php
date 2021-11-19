@@ -18,11 +18,13 @@ class GeoController extends Controller
             $data['user_id'] = auth()->id();
             $gis = GISdata::create($data);
             IPData::log($request);
-            $res = ApiWrapper::sendResponse(["gis" => $gis], "SUCCESS");
+            $res = ["gis" => $gis];
+            $msg = "SUCCESS";
         } catch (\Exception $e) {
-            $res = ApiWrapper::sendResponse(["message" => $e->getMessage()], "ERROR");
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
         }
-        IntegrationLog::log($request,$res);
-        return $res;
+        IntegrationLog::log($request, [$res,$msg]);
+        return ApiWrapper::sendResponse($res,$msg);
     }
 }
