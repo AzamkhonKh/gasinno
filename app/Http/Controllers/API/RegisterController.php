@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\LoginRequest;
 use App\Http\Requests\API\RegisterRequest;
 use App\Lib\ApiWrapper;
 use App\Models\IntegrationLog;
@@ -29,6 +30,8 @@ class RegisterController extends Controller
             $input['role_id'] = Role::where('name', $input['type'])->first()->id;
             $input['password'] = Hash::make($input['password']);
             $user = User::create($input);
+            $user->last_login = Carbon::now();
+            $user->save();
             $success['token'] = $user->createToken('gasInno')->plainTextToken;
             $success['name'] = $user->name;
             $res = $success;
@@ -41,7 +44,7 @@ class RegisterController extends Controller
         return ApiWrapper::sendResponse($res,$msg);
     }
 
-    public function login(RegisterRequest $request): \Illuminate\Http\JsonResponse
+    public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
         $credentials = array(
             'name' => $request->get('name'),

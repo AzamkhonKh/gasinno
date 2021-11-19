@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -27,12 +28,10 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'type' => ['string', Rule::in(Role::pluck('name')->toArray())],
+            'name' => ['required', 'string', Rule::notIn(User::pluck('name')->toArray())],
             'password' => ['required', 'string'],
-            'c_password' => [Rule::requiredIf(function () {
-                return isset($this->type);
-            }), 'same:password'],
+            'type' => ['required','string', Rule::in(Role::pluck('name')->toArray())],
+            'c_password' => ['required', 'same:password'],
             'balloon_volume' => ['required','numeric'],
         ];
     }
