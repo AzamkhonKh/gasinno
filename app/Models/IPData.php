@@ -9,7 +9,11 @@ class IPData extends Model
 {
     use HasFactory;
     protected $table = 'ip_data';
-
+    protected $fillable = [
+        "ip",
+        "mac",
+        "user_id"
+    ];
     public static function log($request){
         $ip = $request->ip();
         $mac = $request->has('mac') ? $request->mac : null;

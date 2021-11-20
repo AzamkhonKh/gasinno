@@ -5,11 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LoginRequest;
 use App\Http\Requests\API\RegisterRequest;
+use App\Http\Requests\RegisterDeviceRequest;
 use App\Lib\ApiWrapper;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\VehicleData;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +36,25 @@ class RegisterController extends Controller
             $user->save();
             $success['token'] = $user->createToken('gasInno')->plainTextToken;
             $success['name'] = $user->name;
+            $res = $success;
+            $msg = "SUCCESS";
+        } catch (\Exception $e) {
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        IntegrationLog::log($request, [$res,$msg]);
+        return ApiWrapper::sendResponse($res,$msg);
+    }
+
+    public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $input = $request->all();
+            $token = Str::random(80);
+            $input['token'] = Hash::make($token);
+            $car = VehicleData::create($input);
+            $success['token'] = $token;
+            $success['device_id'] = $car->id;
             $res = $success;
             $msg = "SUCCESS";
         } catch (\Exception $e) {

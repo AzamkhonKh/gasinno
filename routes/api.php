@@ -16,23 +16,24 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/test',function (){
+Route::get('/test',function (Request $request){
 //    $db = parse_url(env('DATABASE_URL'));
-    $db = \request();
-    print_r($db);
-   return 1;
+    dd($request);
 });
 Route::get('/role',function (){
-   return \App\Models\Role::all();
+    return \App\Models\Role::all();
+});
+Route::get('/users',function (){
+    return \App\Models\User::all();
 });
 Route::post('/login', [RegisterController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register_device']);
+Route::post('/geo-data',[GeoController::class,'get_geo']);
 
 Route::middleware('auth:sanctum')->group(function (){
    Route::get('/user', function (Request $request) {
        $user = User::where('id', auth()->id())->with(['gisData','role'])->first();
        return $user;
    });
-    Route::post('/geo-data',[GeoController::class,'get_geo']);
 
 });

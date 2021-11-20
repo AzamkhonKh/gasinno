@@ -15,7 +15,7 @@ class CreateIntegrationLogsTable extends Migration
     {
         Schema::create('integration_logs', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('api')->nullable();
             $table->longText('request')->nullable();
             $table->longText('response')->nullable();

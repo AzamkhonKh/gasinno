@@ -12,11 +12,13 @@ class GISdata extends Model
 
     protected $table = 'GISdatas';
     protected $fillable = [
-        "user_id",
+        "vehicle_id",
         "lat",
         "long",
         "label",
         "gas",
-        "rele",
+        "relay_state",
+        "speed",
+        "datetime"
     ];
 }

@@ -2,10 +2,19 @@
 
 namespace App\Http\Requests;
 
+use App\Models\VehicleData;
+use App\Rules\checkDeviceToken;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rule;
 
 class GetGeoRequest extends FormRequest
 {
+    /**
+     * @var mixed
+     */
+    private $device_id;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -13,7 +22,7 @@ class GetGeoRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->check();
+        return isset($this->device_token);
     }
 
     /**
@@ -24,11 +33,17 @@ class GetGeoRequest extends FormRequest
     public function rules()
     {
         return [
-            'lat' => ['required','numeric'],
-            'long' => ['required','numeric'],
-            'gas' => ['required','numeric'],
-            'rele' => ['required','numeric','in:1,0'],
+            'device_id' => ['required','integer'],
+            'device_token' => ['required', new checkDeviceToken($this->post('device_id'))],
+
+            'gps_data.lat' => ['required','numeric'],
+            'gps_data.long' => ['required','numeric'],
+            'gps_data.speed' => ['required','numeric'],
+            'gps_data.datetime' => ['required','date_format:d:m:Y H:i:s'],
+            'fual_gas' => ['required','numeric'],
+            'relay_state' => ['required','numeric','in:1,0'],
             'label' => 'string',
+            'all_data' => 'array',
         ];
     }
 }

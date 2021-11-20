@@ -15,13 +15,13 @@ class CreateGISdatasTable extends Migration
     {
         Schema::create('GISdatas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
             $table->string('label')->nullable();
             $table->float('lat',20,10)->comment('latitude - shirina');
             $table->float('long',20,10)->comment('longtitude - dolgota');
             $table->float('gas')->comment('given pressure of gas in system');
-            $table->boolean('rele')->comment('trun on or off to give command');
-
+            $table->boolean('relay_state')->comment('trun on or off to give command');
+            $table->dateTime('datetime')->nullable();
+            $table->integer('speed')->comment('kmph');
             $table->timestamps();
             $table->softDeletes();
         });

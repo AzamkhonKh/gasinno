@@ -19,9 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->double('balloon_volume',20,10);
-            $table->boolean('turnOff')->comment('this command needed to turn off, in future should be moved to Redis or another cache memory')->default(false);
-            $table->dateTime('last_login')->nullable();
+             $table->dateTime('last_login')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
