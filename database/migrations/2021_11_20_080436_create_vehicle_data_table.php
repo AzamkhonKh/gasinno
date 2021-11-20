@@ -15,7 +15,7 @@ class CreateVehicleDataTable extends Migration
     {
         Schema::create('vehicle_data', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('owner_id')->constrained('users','id');
+            $table->foreignId('owner_id')->nullable()->constrained('users','id');
             $table->double('balloon_volume',20,10);
             $table->string('car_number',10);
             $table->string('car_model',255)->nullable();

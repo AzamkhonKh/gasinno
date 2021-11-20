@@ -29,6 +29,7 @@ class RegisterDeviceRequest extends FormRequest
         return [
             'car_number' => ['required', 'string','unique:vehicle_data,car_number'],
             'car_model' => ['string'],
+            'owner_id' => ['integer'],
             'balloon_volume' => ['required','numeric'],
         ];
     }
