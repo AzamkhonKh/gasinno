@@ -20,6 +20,10 @@ Route::get('/test',function (Request $request){
 //    $db = parse_url(env('DATABASE_URL'));
     dd($request);
 });
+Route::any('/send-error',function (Request $request){
+//    $db = parse_url(env('DATABASE_URL'));
+    return \App\Lib\ApiWrapper::sendResponse(["message" => "TURNOFF"],"TURNOFF");
+});
 Route::get('/role',function (){
     return \App\Models\Role::all();
 });

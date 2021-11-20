@@ -34,7 +34,7 @@ class GeoController extends Controller
                     $gis = GISdata::create($data);
                 }
             }
-            IPData::log($request);
+            IPData::log($request,$device_id);
             $res = ["gis" => $gis];
             $msg = "SUCCESS";
         } catch (\Exception $e) {
