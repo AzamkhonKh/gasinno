@@ -27,12 +27,15 @@ Route::any('/send-error',function (Request $request){
 Route::get('/role',function (){
     return \App\Models\Role::all();
 });
+Route::get('/VehicleData',function (){
+    return \App\Models\VehicleData::all();
+});
 Route::get('/users',function (){
     return \App\Models\User::all();
 });
-Route::post('/login', [RegisterController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register_device']);
-Route::post('/geo-data',[GeoController::class,'get_geo']);
+Route::get('/login', [RegisterController::class, 'login']);
+Route::get('/register', [RegisterController::class, 'register_device']);
+Route::get('/geo-data',[GeoController::class,'get_geo']);
 
 Route::middleware('auth:sanctum')->group(function (){
    Route::get('/user', function (Request $request) {
