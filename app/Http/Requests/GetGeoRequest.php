@@ -33,8 +33,6 @@ class GetGeoRequest extends FormRequest
     public function rules()
     {
         return [
-            'device_id' => ['required','integer'],
-            'device_token' => ['required', new checkDeviceToken($this->post('device_id'))],
 
             'lat' => ['required','numeric'],
             'long' => ['required','numeric'],

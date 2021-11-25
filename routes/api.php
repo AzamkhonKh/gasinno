@@ -35,7 +35,7 @@ Route::any('/users',function (){
 });
 Route::any('/login', [RegisterController::class, 'login']);
 Route::any('/register', [RegisterController::class, 'register_device']);
-Route::any('/geo-data',[GeoController::class,'get_geo']);
+Route::any('/geo-data',[GeoController::class,'get_geo'])->middleware('GeoMiddleware');
 
 Route::middleware('auth:sanctum')->group(function (){
    Route::any('/user', function (Request $request) {
