@@ -28,7 +28,7 @@ class VehicleData extends Model
         return $this->belongsTo(User::class,'id','owner_id');
     }
     public function geo(){
-        return $this->hasMany(GISdata::class,'id','vehicle_id');
+        return $this->hasMany(GISdata::class,'vehicle_id','id');
     }
 
 
