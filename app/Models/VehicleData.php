@@ -19,8 +19,16 @@ class VehicleData extends Model
         "turnOff",
     ];
 
+    protected $hidden = [
+        'token',
+        'created_at',
+        'updated_at'
+    ];
     public function owner(){
         return $this->belongsTo(User::class,'id','owner_id');
+    }
+    public function geo(){
+        return $this->belongsTo(GISdata::class,'id','vehicle_id');
     }
 
 

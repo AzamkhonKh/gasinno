@@ -17,7 +17,7 @@ class GeoController extends Controller
         try {
             $device_id = $request->post("device_id");
             $data = $this->get_geo_req(
-                $request->post("gps_data"),
+                $request->all(),
                 $device_id,
                 $request->post("relay_state"),
                 $request->post("fual_gas")

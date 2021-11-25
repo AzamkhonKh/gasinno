@@ -15,7 +15,7 @@ class checkDeviceToken implements Rule
      *
      * @return void
      */
-    public function __construct(int $device_id)
+    public function __construct($device_id)
     {
         $this->model = VehicleData::find($device_id);
     }

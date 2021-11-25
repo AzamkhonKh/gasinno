@@ -34,6 +34,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'deleted_at',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -65,9 +68,9 @@ class User extends Authenticatable
         return IntegrationLog::where('user_id',$this->id)->select('api','request','response')->get();
     }
 
-    public function gisData(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function vehicles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(GISdata::class);
+        return $this->hasMany(VehicleData::class,'owner_id','id');
     }
 
     public static function getIp(): ?string

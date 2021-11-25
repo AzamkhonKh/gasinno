@@ -36,10 +36,11 @@ class GetGeoRequest extends FormRequest
             'device_id' => ['required','integer'],
             'device_token' => ['required', new checkDeviceToken($this->post('device_id'))],
 
-            'gps_data.lat' => ['required','numeric'],
-            'gps_data.long' => ['required','numeric'],
-            'gps_data.speed' => ['required','numeric'],
-            'gps_data.datetime' => ['required','date_format:d:m:Y H:i:s'],
+            'lat' => ['required','numeric'],
+            'long' => ['required','numeric'],
+            'speed' => ['required','numeric'],
+            'datetime' => ['required','date_format:d:m:Y H:i:s'],
+
             'fual_gas' => ['required','numeric'],
             'relay_state' => ['required','numeric','in:1,0'],
             'label' => 'string',
