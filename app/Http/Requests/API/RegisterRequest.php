@@ -27,12 +27,15 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'name' => ['required', 'string', Rule::notIn(User::pluck('name')->toArray())],
+            'name' => ['required', 'string'],
+            'phone' => ['required', 'regex:/\([0-9]{2}\)[0-9]{3}-[0-9]{2}-[0-9]{2}/'],
+            'firstname' => ['string'],
+            'lastname' => ['string'],
             'password' => ['required', 'string'],
-            'type' => ['required','string', Rule::in(Role::pluck('name')->toArray())],
+            'email' => ['email'],
             'c_password' => ['required', 'same:password'],
-            'balloon_volume' => ['required','numeric'],
         ];
     }
 }

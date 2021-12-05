@@ -24,6 +24,7 @@ class GISdata extends Model
         "label",
         "gas",
         "relay_state",
+        "restored",
         "speed",
         "datetime"
     ];

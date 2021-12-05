@@ -21,7 +21,6 @@ class CreateVehicleDataTable extends Migration
             $table->string('car_model',255)->nullable();
             $table->string('token',255)->nullable();
             $table->boolean('verified')->comment('does this car should work with this owner')->default(false);
-            $table->boolean('turnOff')->comment('this command needed to turn off, in future should be moved to Redis or another cache memory')->default(false);
             $table->timestamps();
             $table->index('token');
         });

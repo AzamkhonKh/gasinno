@@ -15,8 +15,7 @@ class VehicleData extends Model
         "car_number",
         "car_model",
         "token",
-        "active",
-        "turnOff",
+        "verified",
     ];
 
     protected $hidden = [

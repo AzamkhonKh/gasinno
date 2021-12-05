@@ -20,6 +20,7 @@ class CreateGISdatasTable extends Migration
             $table->float('long',20,10)->comment('longtitude - dolgota');
             $table->float('gas')->comment('given pressure of gas in system');
             $table->boolean('relay_state')->comment('trun on or off to give command');
+            $table->boolean('restored')->comment('is given date restored');
             $table->dateTime('datetime')->nullable();
             $table->integer('speed')->comment('kmph');
             $table->timestamps();

@@ -33,16 +33,14 @@ class GetGeoRequest extends FormRequest
     public function rules()
     {
         return [
-
             'lat' => ['required','numeric'],
             'long' => ['required','numeric'],
             'speed' => ['required','numeric'],
-            'datetime' => ['required','date_format:d:m:Y H:i:s'],
-
+            'datetime' => ['required','numeric'],
             'fual_gas' => ['required','numeric'],
             'relay_state' => ['required','numeric','in:1,0'],
+            'restored' => ['numeric','in:1,0'],
             'label' => 'string',
-            'all_data' => 'array',
         ];
     }
 }

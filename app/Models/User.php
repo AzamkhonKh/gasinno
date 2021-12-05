@@ -20,10 +20,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'role_id',
+        'firstname',
+        'lastname',
+        'api_token',
+        'phone',
         'email',
         'password',
-        'balloon_volume',
+        'usb_key',
+        'usb_key_validated',
     ];
 
     /**asa
@@ -32,8 +36,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
+        'api_token',
         'password',
         'remember_token',
+        'usb_key',
         'deleted_at',
         'created_at',
         'updated_at'

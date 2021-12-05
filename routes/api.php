@@ -33,14 +33,15 @@ Route::any('/VehicleData',function (){
 Route::any('/users',function (){
     return \App\Models\User::with(['vehicles.geo'])->get();
 });
-Route::any('/login', [RegisterController::class, 'login']);
-Route::any('/register', [RegisterController::class, 'register_device']);
-Route::any('/geo-data',[GeoController::class,'get_geo'])->middleware('GeoMiddleware');
+Route::post('/login', [RegisterController::class, 'login']);
+Route::post('/register', [RegisterController::class, 'register_device']);
+Route::post('/user/register', [RegisterController::class, 'register']);
+Route::get('/geo-data',[GeoController::class,'get_geo'])->middleware('GeoMiddleware');
 
-Route::middleware('auth:sanctum')->group(function (){
-   Route::any('/user', function (Request $request) {
-       $user = User::where('id', auth()->id())->with(['gisData','role'])->first();
+Route::middleware('auth:api')->group(function (){
+   Route::get('/user', function (Request $request) {
+       $user = User::where('id', auth()->id())->with(['vehicles','role'])->first();
        return $user;
    });
-
+    Route::get('/device',[GeoController::class,'request_geo']);
 });
