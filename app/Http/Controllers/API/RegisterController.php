@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\GenerateUSBToken;
 use App\Http\Requests\API\LoginRequest;
 use App\Http\Requests\API\RegisterRequest;
 use App\Http\Requests\RegisterDeviceRequest;
@@ -44,6 +45,10 @@ class RegisterController extends Controller
         DB::commit();
         IntegrationLog::log($request, [$res,$msg]);
         return ApiWrapper::sendResponse($res,$msg);
+    }
+
+    public function generate_usb_token(GenerateUSBToken $request){
+
     }
 
     public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse

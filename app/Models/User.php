@@ -59,9 +59,9 @@ class User extends Authenticatable
         return exec('getmac') ?? null;
     }
 
-    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function role(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->hasMany(UserRole::class, 'user_id', 'id');
     }
 
     public function ip(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -71,27 +71,49 @@ class User extends Authenticatable
 
     public function log(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return IntegrationLog::where('user_id',$this->id)->select('api','request','response')->get();
+        return IntegrationLog::where('user_id', $this->id)->select('api', 'request', 'response')->get();
     }
 
     public function vehicles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(VehicleData::class,'owner_id','id');
+        return $this->hasMany(VehicleData::class, 'owner_id', 'id');
     }
 
     public static function getIp(): ?string
     {
-        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
-            if (array_key_exists($key, $_SERVER) === true){
-                foreach (explode(',', $_SERVER[$key]) as $ip){
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
                     $ip = trim($ip); // just to be safe
-                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
                         return $ip;
                     }
                 }
             }
         }
         return null;
+    }
+
+    public function getRolesAttribute(): array
+    {
+        return Role::query()
+            ->whereIn('id', $this->role()->pluck('role_id')->toArray())
+            ->pluck('name')
+            ->toArray();
+    }
+
+    public function checkRole(string $role): bool
+    {
+        if (!isset($this->roles) || !is_array($this->roles)) {
+            $this->roles = $this->getRolesAttribute();
+        }
+
+        foreach ($this->roles as $r) {
+            if ($r == $role) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

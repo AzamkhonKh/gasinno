@@ -33,9 +33,9 @@ Route::any('/VehicleData',function (){
 Route::any('/users',function (){
     return \App\Models\User::with(['vehicles.geo'])->get();
 });
+
+
 Route::post('/login', [RegisterController::class, 'login']);
-Route::post('/register', [RegisterController::class, 'register_device']);
-Route::post('/user/register', [RegisterController::class, 'register']);
 Route::get('/geo-data',[GeoController::class,'get_geo'])->middleware('GeoMiddleware');
 
 Route::middleware('auth:api')->group(function (){
@@ -44,4 +44,7 @@ Route::middleware('auth:api')->group(function (){
        return $user;
    });
     Route::get('/device',[GeoController::class,'request_geo']);
+    Route::post('/register', [RegisterController::class, 'register_device']);
+    Route::post('/user/register', [RegisterController::class, 'register']);
+
 });

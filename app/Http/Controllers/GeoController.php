@@ -9,6 +9,7 @@ use App\Models\asyncActions;
 use App\Models\GISdata;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
+use App\Models\VehicleData;
 use Illuminate\Support\Facades\DB;
 
 class GeoController extends Controller
@@ -54,6 +55,9 @@ class GeoController extends Controller
             switch ($request->input('mode',0)) {
                 case 1:
                     $res = $this->turnoff_device($request);
+                    break;
+                case 2:
+                    $res = $this->assign_device($request);
                     break;
                 default:
                     $res = $this->paginate_geo($request);
@@ -121,5 +125,10 @@ class GeoController extends Controller
             'command' => $async,
             'message' => 'will send turn off message'
         ];
+    }
+
+    private function assign_device(GeoQuery $request)
+    {
+        $device = VehicleData::where('id',$request->input('device_id'))->where('owner_id');
     }
 }

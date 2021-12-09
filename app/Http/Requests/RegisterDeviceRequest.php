@@ -16,7 +16,7 @@ class RegisterDeviceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->checkRole('administrator');
     }
 
     /**
@@ -29,7 +29,7 @@ class RegisterDeviceRequest extends FormRequest
         return [
             'car_number' => ['required', 'string','unique:vehicle_data,car_number'],
             'car_model' => ['string'],
-            'owner_id' => ['integer'],
+            'owner_id' => ['required', 'integer'],
             'balloon_volume' => ['required','numeric'],
         ];
     }
