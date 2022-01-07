@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\API\QRAssignRequest;
 use App\Http\Requests\GeoQuery;
 use App\Http\Requests\GetGeoRequest;
 use App\Lib\ApiWrapper;
@@ -10,6 +11,7 @@ use App\Models\GISdata;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
 use App\Models\VehicleData;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\DB;
 
 class GeoController extends Controller
@@ -56,9 +58,6 @@ class GeoController extends Controller
                 case 1:
                     $res = $this->turnoff_device($request);
                     break;
-                case 2:
-                    $res = $this->assign_device($request);
-                    break;
                 default:
                     $res = $this->paginate_geo($request);
             }
@@ -70,6 +69,19 @@ class GeoController extends Controller
         }
         return ApiWrapper::sendResponse($res, $msg);
 
+    }
+
+    public function assign_device(QRAssignRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $owner_id = $request->has('user_id') ? $request->input('user_id') : auth()->id();
+        $device = VehicleData::query()->where('qr_text',$request->input('qr_token'))->first();
+        if (is_null($device->owner_id)){
+            $device->owner_id = $owner_id;
+            $msg = 'SUCCESS';
+        }else{
+            $msg = 'OWNER ALREADY EXISTS !';
+        }
+        return ApiWrapper::sendResponse(['device_data' => $device],$msg);
     }
 
     private function get_geo_req(array $geo_data, int $device_id): array
@@ -127,8 +139,4 @@ class GeoController extends Controller
         ];
     }
 
-    private function assign_device(GeoQuery $request)
-    {
-        $device = VehicleData::where('id',$request->input('device_id'))->where('owner_id');
-    }
 }
