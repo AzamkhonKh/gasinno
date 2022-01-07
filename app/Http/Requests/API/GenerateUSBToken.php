@@ -27,7 +27,6 @@ class GenerateUSBToken extends FormRequest
             'user_id' => ['required', 'exist:users,id'],
             'usb_token' => ['string', 'max:255'],
             'usb_key_validated' => ['date_format:Y-m-d H:i:s'],
-
         ];
     }
 }
