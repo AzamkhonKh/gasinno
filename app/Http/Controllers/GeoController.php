@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\API\QRAssignRequest;
 use App\Http\Requests\GeoQuery;
 use App\Http\Requests\GetGeoRequest;
 use App\Lib\ApiWrapper;
@@ -10,9 +9,6 @@ use App\Models\asyncActions;
 use App\Models\GISdata;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
-use App\Models\VehicleData;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Support\Facades\DB;
 
 class GeoController extends Controller
 {
@@ -71,19 +67,6 @@ class GeoController extends Controller
 
     }
 
-    public function assign_device(QRAssignRequest $request): \Illuminate\Http\JsonResponse
-    {
-        $owner_id = $request->has('user_id') ? $request->input('user_id') : auth()->id();
-        $device = VehicleData::query()->where('qr_text',$request->input('qr_token'))->first();
-        if (is_null($device->owner_id)){
-            $device->owner_id = $owner_id;
-            $msg = 'SUCCESS';
-        }else{
-            $msg = 'OWNER ALREADY EXISTS !';
-        }
-        return ApiWrapper::sendResponse(['device_data' => $device],$msg);
-    }
-
     private function get_geo_req(array $geo_data, int $device_id): array
     {
         return [
@@ -126,13 +109,21 @@ class GeoController extends Controller
 
     private function turnoff_device(GeoQuery $request): array
     {
-        $async = asyncActions::create([
-            "command" => "turn off device",
-            "command_int" => 1,
-            "completed" => false,
-            "user_id" => auth()->id(),
-            "vehicle_id" => $request->input('device_id'),
-        ]);
+        $prev_action = asyncActions::query()
+            ->where('vehicle_id',$request->input('device_id'))
+            ->where('completed',0)
+            ->first();
+        if (empty($prev_action)){
+            $async = asyncActions::query()->create([
+                "command" => "turn off device",
+                "command_int" => 1,
+                "completed" => false,
+                "user_id" => auth()->id(),
+                "vehicle_id" => $request->input('device_id'),
+            ]);
+        }else{
+            $async = $prev_action;
+        }
         return [
             'command' => $async,
             'message' => 'will send turn off message'

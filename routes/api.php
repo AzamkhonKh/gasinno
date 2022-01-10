@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\DeviceController;
+use App\Http\Controllers\API\DriverController;
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\GeoController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,35 +19,39 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::any('/test',function (Request $request){
+Route::any('/test', function (Request $request) {
 //    $db = parse_url(env('DATABASE_URL'));
     dd($request);
 });
-Route::any('/send-error',function (Request $request){
+Route::any('/send-error', function (Request $request) {
 //    $db = parse_url(env('DATABASE_URL'));
-    return \App\Lib\ApiWrapper::sendResponse(["message" => "TURNOFF"],"TURNOFF");
+    return \App\Lib\ApiWrapper::sendResponse(["message" => "TURNOFF"], "TURNOFF");
 });
-Route::any('/role',function (){
+Route::any('/role', function () {
     return \App\Models\Role::all();
 });
-Route::any('/VehicleData',function (){
+Route::any('/VehicleData', function () {
     return \App\Models\VehicleData::with(['geo'])->get();
 });
-Route::any('/users',function (){
+Route::any('/users', function () {
     return \App\Models\User::with(['vehicles.geo'])->get();
 });
 
 
 Route::post('/login', [RegisterController::class, 'login']);
-Route::get('/geo-data',[GeoController::class,'get_geo'])->middleware('GeoMiddleware');
+Route::get('/geo-data', [GeoController::class, 'get_geo'])->middleware('GeoMiddleware');
 
-Route::middleware('auth:api')->group(function (){
-   Route::get('/user', function (Request $request) {
-       $user = User::where('id', auth()->id())->with(['vehicles','role'])->first();
-       return $user;
-   });
-    Route::get('/device',[GeoController::class,'request_geo']);
-    Route::post('/register', [RegisterController::class, 'register_device']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('/user', function (Request $request) {
+        $user = User::where('id', auth()->id())->with(['vehicles'])->first()->append('Roles');
+        return $user;
+    });
+    Route::get('/device', [GeoController::class, 'request_geo']);
+    Route::post('/device/register', [RegisterController::class, 'register_device']);
     Route::post('/user/register', [RegisterController::class, 'register']);
 
+    Route::post('device/assign', [DeviceController::class, 'assign_device']);
+    Route::apiResource('/driver', DriverController::class);
+    Route::get('/user/drivers', [UserController::class, 'getDrivers']);
+    Route::get('/user/vehicles', [UserController::class, 'getVehicle']);
 });

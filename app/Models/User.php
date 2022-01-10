@@ -37,6 +37,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'api_token',
+        'usb_key_validated',
         'password',
         'remember_token',
         'usb_key',

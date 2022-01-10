@@ -18,7 +18,7 @@ class RegisterRequest extends FormRequest
     public function authorize(): bool
     {
         return auth()->user()->checkRole('administrator');
-    }
+        }
 
     /**
      * Get the validation rules that apply to the request.

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class VehicleData extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         "owner_id",
         "balloon_volume",
         "car_number",
@@ -21,8 +22,11 @@ class VehicleData extends Model
 
     protected $hidden = [
         'token',
+        'deleted_at',
         'created_at',
-        'updated_at'
+        'updated_at',
+
+        'qr_text'
     ];
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

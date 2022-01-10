@@ -10,18 +10,34 @@ use App\Http\Requests\RegisterDeviceRequest;
 use App\Lib\ApiWrapper;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
-use App\Models\Role;
 use App\Models\User;
 use App\Models\VehicleData;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
+    public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $input = $request->all();
+            $token = Str::random(80);
+            $input['token'] = Hash::make($token);
+            $car = VehicleData::create($input);
+            $success['token'] = $token;
+            $success['device_id'] = $car->id;
+            $res = $success;
+            $msg = "SUCCESS";
+        } catch (\Exception $e) {
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        IntegrationLog::log($request, [$res, $msg]);
+        return ApiWrapper::sendResponse($res, $msg);
+    }
+
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();
@@ -43,31 +59,8 @@ class RegisterController extends Controller
             $msg = "ERROR";
         }
         DB::commit();
-        IntegrationLog::log($request, [$res,$msg]);
-        return ApiWrapper::sendResponse($res,$msg);
-    }
-
-    public function generate_usb_token(GenerateUSBToken $request){
-
-    }
-
-    public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $input = $request->all();
-            $token = Str::random(80);
-            $input['token'] = Hash::make($token);
-            $car = VehicleData::create($input);
-            $success['token'] = $token;
-            $success['device_id'] = $car->id;
-            $res = $success;
-            $msg = "SUCCESS";
-        } catch (\Exception $e) {
-            $res = ["message" => $e->getMessage()];
-            $msg = "ERROR";
-        }
-        IntegrationLog::log($request, [$res,$msg]);
-        return ApiWrapper::sendResponse($res,$msg);
+        IntegrationLog::log($request, [$res, $msg]);
+        return ApiWrapper::sendResponse($res, $msg);
     }
 
     public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
