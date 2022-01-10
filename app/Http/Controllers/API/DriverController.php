@@ -54,6 +54,7 @@ class DriverController extends Controller
         if (empty($driver)) {
             return ApiWrapper::sendResponse(['error' => 'not driver by id'], 'ERROR');
         }
+        $driver->append('image');
         return ApiWrapper::sendResponse(['driver data' => $driver], 'SUCCESS',201);
     }
 

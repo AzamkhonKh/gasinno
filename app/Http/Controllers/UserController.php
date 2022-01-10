@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\GetDriversRequest;
 use App\Lib\ApiWrapper;
 use App\Models\DriverCarRelation;
 use App\Models\DriverData;
