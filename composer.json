@@ -11,6 +11,8 @@
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "rakutentech/laravel-request-docs": "^1.5",
+
         "ext-json": "*"
     },
     "require-dev": {
@@ -21,7 +23,6 @@
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^5.10",
         "phpunit/phpunit": "^9.5.10",
-        "rakutentech/laravel-request-docs": "^1.5"
     },
     "autoload": {
         "psr-4": {
