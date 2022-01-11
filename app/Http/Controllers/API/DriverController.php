@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Driver\StoreRequest;
+use App\Http\Requests\AssignDriver;
 use App\Lib\ApiWrapper;
+use App\Models\DriverCarRelation;
 use App\Models\DriverData;
 use App\Models\FileManager;
 use Illuminate\Http\Request;
@@ -12,14 +14,14 @@ use Illuminate\Support\Facades\DB;
 
 class DriverController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function assign_driver(AssignDriver $request): \Illuminate\Http\JsonResponse
     {
-        //
+        DriverCarRelation::query()->create([
+            'vehicle_id' => $request->input('device_id'),
+            'driver_id' => $request->input('driver_id')
+        ]);
+
+        return ApiWrapper::sendResponse(['message'=>"SUCCESS"],'SUCCESS',201);
     }
 
     /**

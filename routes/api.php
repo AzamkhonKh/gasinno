@@ -37,6 +37,7 @@ Route::any('/users', function () {
     return \App\Models\User::with(['vehicles.geo'])->get();
 });
 
+Route::get('/device/qrcode/{device_id}', [DeviceController::class, 'getQRCode']);
 
 Route::post('/login', [RegisterController::class, 'login']);
 Route::get('/geo-data', [GeoController::class, 'get_geo'])->middleware('GeoMiddleware');
@@ -46,11 +47,12 @@ Route::middleware('auth:api')->group(function () {
         $user = User::where('id', auth()->id())->with(['vehicles'])->first()->append('Roles');
         return $user;
     });
-    Route::get('/device', [GeoController::class, 'request_geo']);
+    Route::get('/device', [DeviceController::class, 'request_geo']);
     Route::post('/device/register', [RegisterController::class, 'register_device']);
     Route::post('/user/register', [RegisterController::class, 'register']);
 
     Route::post('/device/assign', [DeviceController::class, 'assign_device']);
+    Route::post('/driver/assign', [DriverController::class, 'assign_driver']);
     Route::apiResource('/driver', DriverController::class,['except'=>['index']]);
     Route::get('/user/drivers', [UserController::class, 'getDrivers']);
     Route::get('/user/vehicles', [UserController::class, 'getVehicle']);

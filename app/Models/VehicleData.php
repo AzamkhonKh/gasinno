@@ -18,6 +18,7 @@ class VehicleData extends Model
         "car_model",
         "token",
         "verified",
+        "qr_text",
     ];
 
     protected $hidden = [
