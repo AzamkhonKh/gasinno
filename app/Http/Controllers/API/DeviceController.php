@@ -7,19 +7,28 @@ use App\Http\Requests\API\QRAssignRequest;
 use App\Http\Requests\GeoQuery;
 use App\Lib\ApiWrapper;
 use App\Models\asyncActions;
+use App\Models\DriverCarRelation;
+use App\Models\DriverData;
 use App\Models\GISdata;
 use App\Models\VehicleData;
+use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode as SimpleQR;
 
 class DeviceController extends Controller
 {
     public function getDriver($id): \Illuminate\Http\JsonResponse
     {
+        DB::beginTransaction();
         $device = VehicleData::query()->find($id);
         if (empty($device)) {
             return ApiWrapper::sendResponse(['message' => 'could not found device with this id'], 'ERROR');
         }
-        return ApiWrapper::sendResponse(['data' => $device], 'SUCCESS');
+        $relation = DriverCarRelation::query()->where('vehicle_id',$device->id)
+            ->pluck('driver_id')->toArray();
+        $drivers = DriverData::query()->whereIn('id',$relation)->get();
+
+        DB::commit();
+        return ApiWrapper::sendResponse(['data' => $drivers], 'SUCCESS');
     }
 
     public function getQRCode($id)
