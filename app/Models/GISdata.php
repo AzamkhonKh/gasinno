@@ -17,7 +17,7 @@ class GISdata extends Model
         'created_at',
         'updated_at'
     ];
-    protected array $fillable = [
+    protected $fillable = [
         "vehicle_id",
         "lat",
         "long",

@@ -15,7 +15,7 @@ class asyncActions extends Model
         'created_at',
         'updated_at'
     ];
-    protected array $fillable = [
+    protected $fillable = [
         "command",
         "command_int",
         "completed",

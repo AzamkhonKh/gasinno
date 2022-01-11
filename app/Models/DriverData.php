@@ -10,7 +10,7 @@ class DriverData extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'surname',
         'age',
