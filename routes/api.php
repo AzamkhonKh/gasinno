@@ -51,7 +51,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/user/register', [RegisterController::class, 'register']);
 
     Route::post('/device/assign', [DeviceController::class, 'assign_device']);
-    Route::apiResource('/driver', DriverController::class);
+    Route::apiResource('/driver', DriverController::class,['except'=>['index']]);
     Route::get('/user/drivers', [UserController::class, 'getDrivers']);
     Route::get('/user/vehicles', [UserController::class, 'getVehicle']);
 });
