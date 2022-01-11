@@ -24,8 +24,8 @@ class QRAssignRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['integer','exist:users,id'],
-            'qr_token' => ['required','string','exist:vehicle_data,qr_text']
+            'user_id' => ['integer','exists:users,id'],
+            'qr_token' => ['required','string','exists:vehicle_data,qr_text']
         ];
     }
 }

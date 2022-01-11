@@ -9,7 +9,7 @@ class IPData extends Model
 {
     use HasFactory;
     protected $table = 'ip_data';
-    protected $fillable = [
+    protected array $fillable = [
         "ip",
         "mac",
         "device_id",

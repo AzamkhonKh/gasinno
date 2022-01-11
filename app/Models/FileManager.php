@@ -10,7 +10,7 @@ class FileManager extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+    protected array $fillable = [
         'path', 'name'
     ];
 

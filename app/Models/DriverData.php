@@ -10,7 +10,7 @@ class DriverData extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+    protected array $fillable = [
         'name',
         'surname',
         'age',
@@ -18,7 +18,15 @@ class DriverData extends Model
         'licenseData',
         'avatar_id'
     ];
-    protected $appends = ['image'];
+    protected $hidden = [
+        'deleted_at',
+        'licenseData'
+    ];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+    protected $appends = ['image','license'];
 
     public function avatar()
     {
@@ -34,6 +42,10 @@ class DriverData extends Model
             $path = $file->path;
         }
         return asset('/uploads/' . $path);
+    }
+    public function getLicenseAttribute(): object
+    {
+        return (object)json_decode($this->licenseData);
     }
 
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class IntegrationLog extends Model
 {
     use HasFactory;
-    protected $fillable = ["response","request","api","user_id"];
+    protected array $fillable = ["response","request","api","user_id"];
     /**
      * @var string
      */

@@ -25,6 +25,7 @@ class DeviceController extends Controller
         $device = VehicleData::query()->where('qr_text', $request->input('qr_token'))->first();
         if (is_null($device->owner_id)) {
             $device->owner_id = $owner_id;
+            $device->save();
             $msg = 'SUCCESS';
         } else {
             $msg = 'OWNER ALREADY EXISTS !';
