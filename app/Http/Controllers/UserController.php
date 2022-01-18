@@ -12,13 +12,7 @@ class UserController extends Controller
 {
     public function getDrivers(): \Illuminate\Http\JsonResponse
     {
-        $device_ids = VehicleData::query()
-            ->where('owner_id',auth()->id())
-            ->pluck('id')->toArray();
-        $drivers_ids = DriverCarRelation::query()
-            ->whereIn('vehicle_id',$device_ids)
-            ->pluck('driver_id')->toArray();
-        $drivers = DriverData::query()->whereIn('id',$drivers_ids)->get();
+        $drivers = DriverData::query()->where('owner_id',auth()->id())->get();
 
         return ApiWrapper::sendResponse(['drivers' => $drivers],'SUCCESS');
     }

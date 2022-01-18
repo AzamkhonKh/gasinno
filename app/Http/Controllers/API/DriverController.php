@@ -38,6 +38,7 @@ class DriverController extends Controller
         if (!is_null($file_data) && isset($file_data->id)) {
             $validated_data['avatar_id'] = $file_data->id;
         }
+        $validated_data['owner_id'] = auth()->id();
 
         $driver = DriverData::query()->create($validated_data);
 

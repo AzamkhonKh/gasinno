@@ -19,11 +19,11 @@ class VehicleData extends Model
         "token",
         "verified",
         "qr_text",
+        'deleted_at',
     ];
 
     protected $hidden = [
         'token',
-        'deleted_at',
         'created_at',
         'updated_at',
 

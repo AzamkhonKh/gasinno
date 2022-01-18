@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\QRAssignRequest;
 use App\Http\Requests\GeoQuery;
+use App\Http\Requests\RegisterDeviceRequest;
+use App\Http\Requests\UpdateDeviceRequest;
 use App\Lib\ApiWrapper;
 use App\Models\asyncActions;
 use App\Models\DriverCarRelation;
@@ -29,6 +31,16 @@ class DeviceController extends Controller
 
         DB::commit();
         return ApiWrapper::sendResponse(['data' => $drivers], 'SUCCESS');
+    }
+
+    public function update(UpdateDeviceRequest $request){
+        $data = $request->validated();
+        $car = VehicleData::query()->where('id',$data['car_id'])->update($data);
+        return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
+    }
+    public function destroy($device_id){
+        $car = VehicleData::query()->where('id',$device_id)->delete();
+        return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
     }
 
     public function getQRCode($id)

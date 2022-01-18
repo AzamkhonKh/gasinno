@@ -16,7 +16,8 @@ class DriverData extends Model
         'age',
         'phone',
         'licenseData',
-        'avatar_id'
+        'avatar_id',
+        'owner_id'
     ];
     protected $hidden = [
         'deleted_at',

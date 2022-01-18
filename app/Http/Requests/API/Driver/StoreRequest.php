@@ -13,7 +13,7 @@ class StoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->checkRole('administrator');
+        return auth()->check();
     }
 
     /**

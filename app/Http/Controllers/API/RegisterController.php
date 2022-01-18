@@ -16,13 +16,20 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Type\Integer;
 
 class RegisterController extends Controller
 {
     public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $input = $request->all();
+            $input = $request->validated();
+            if (!isset($input['car_number'])) {
+                $input['car_number'] = Str::random(10);
+            }
+            if (!isset($input['balloon_volume'])) {
+                $input['balloon_volume'] = 1;
+            }
             $token = Str::random(80);
             $input['token'] = Hash::make($token);
             $car = VehicleData::create($input);
