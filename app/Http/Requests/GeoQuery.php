@@ -16,7 +16,7 @@ class GeoQuery extends FormRequest
     {
         $device = VehicleData::find($this->input('device_id'));
 
-        return $device && $device->owner_id == auth()->id();
+        return ($device && $device->owner_id == auth()->id()) || auth()->user()->checkRole('administrator');
     }
 
     /**

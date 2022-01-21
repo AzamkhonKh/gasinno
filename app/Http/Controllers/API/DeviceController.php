@@ -74,11 +74,25 @@ class DeviceController extends Controller
 
         try {
             switch ($request->input('mode', 0)) {
+                case 0:
+                    $res = $this->paginate_geo($request);
+                    break;
                 case 1:
                     $res = $this->turnoff_device($request);
                     break;
+                case 2:
+                    // get device driver
+                    $driver_id = DriverCarRelation::query()
+                        ->where('vehicle_id',$request->input('device_id'))->pluck('driver_id')->toArray();
+                    $res = DriverData::query()->whereIn('id',$driver_id)->first();
+                    break;
+                case 3:
+                    // get device data
+                    $res = VehicleData::query()->find($request->input('device_id'));
+                    break;
                 default:
-                    $res = $this->paginate_geo($request);
+                    throw new \Exception("set mode please !");
+
             }
 
             $msg = 'SUCCESS';
