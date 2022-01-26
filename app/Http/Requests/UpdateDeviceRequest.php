@@ -27,6 +27,7 @@ class UpdateDeviceRequest extends FormRequest
             'car_id' => ['required','integer','exists:vehicle_data,id'],
             'balloon_volume' => ['required','numeric'],
             'car_number' => ['required','string','unique:vehicle_data,car_number'],
+            'year' => ['integer'],
             'car_model' => ['string'],
             'owner_id' => [ 'integer'],
         ];

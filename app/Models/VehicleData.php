@@ -19,6 +19,7 @@ class VehicleData extends Model
         "token",
         "verified",
         "qr_text",
+        "year",
         'deleted_at',
     ];
 

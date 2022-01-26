@@ -29,7 +29,20 @@ class StoreRequest extends FormRequest
             'surname' => ['required','string','max:255'],
             'age' => ['required','integer','max:100'],
             'phone' => ['required', 'regex:/\([0-9]{2}\)[0-9]{3}-[0-9]{2}-[0-9]{2}/'],
-            'licenseData' => ['required','json'],
+            'licenseData' => ['required',function ($attribute, $value, $fail) {
+                if (array_key_exists('type', $value))
+                {
+
+                    if (!is_array($value['type'])) {
+                        $fail('The '.$attribute.'\' s type property is not array.');
+                    }
+                }
+                else
+                {
+                    $fail('The '.$attribute.'\' s type property not found.');
+                }
+
+            }],
         ];
     }
 }
