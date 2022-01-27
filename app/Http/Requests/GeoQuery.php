@@ -28,7 +28,7 @@ class GeoQuery extends FormRequest
     {
         return [
             'device_id' => ['required'],
-            'mode' => ['integer', 'in:0,1,2'],
+            'mode' => ['integer', 'in:0,1,2,3'],
             'page' => ['integer'],
             'page_size' => ['integer', 'min:0', 'max:10'],
             'from' => ['date_format:Y-m-d H:i:s'],
