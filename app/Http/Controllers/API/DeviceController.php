@@ -71,7 +71,7 @@ class DeviceController extends Controller
 
     public function request_geo(GeoQuery $request): \Illuminate\Http\JsonResponse
     {
-
+        $res = array();
         try {
             switch ($request->input('mode', 0)) {
                 case 0:
@@ -84,11 +84,11 @@ class DeviceController extends Controller
                     // get device driver
                     $driver_id = DriverCarRelation::query()
                         ->where('vehicle_id',$request->input('device_id'))->pluck('driver_id')->toArray();
-                    $res = DriverData::query()->whereIn('id',$driver_id)->first();
+                    $res['data'] = DriverData::query()->whereIn('id',$driver_id)->first();
                     break;
                 case 3:
                     // get device data
-                    $res = VehicleData::query()->find($request->input('device_id'));
+                    $res['data'] = VehicleData::query()->find($request->input('device_id'));
                     break;
                 default:
                     throw new \Exception("set mode please !");
