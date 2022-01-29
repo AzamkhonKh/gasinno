@@ -12,4 +12,5 @@ class DriverCarRelation extends Model
         'vehicle_id',
         'driver_id',
     ];
+    public $timestamps = false;
 }
