@@ -40,7 +40,9 @@ class DeviceController extends Controller
     }
     public function destroy($device_id){
         $car = VehicleData::query()->where('id',$device_id)->delete();
-        return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
+        $res = ['data' => $car];
+        IntegrationLog::log($request, [$res, 'SUCCESS']);
+        return ApiWrapper::sendResponse($res, 'SUCCESS');
     }
 
     public function getQRCode($id)
