@@ -27,7 +27,7 @@ class getStatisticsRequest extends FormRequest
     {
         return [
             'device_id' => ['required'],
-            'mode' => ['required','integer', 'in:0,1,2,3'],
+            'mode' => ['required','integer', 'in:0,1,2,3,4,5'],
             'start_time' => ['required','date_format:Y-m-d H:i:s'],
         ];
     }

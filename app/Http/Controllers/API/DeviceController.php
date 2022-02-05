@@ -57,39 +57,63 @@ class DeviceController extends Controller
         try{
             switch($mode){
                 case "0":
-                    // day by hour
+                    // minute by seconds
                     $data = $query
-                            ->select(DB::raw('avg(gas), extract(hour from datetime) as hour'))
+                            ->select(DB::raw('avg(gas), extract(second from datetime) as second, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s'))
-                            ->groupBy('hour')
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMinute()->format('Y-m-d H:i:s'))
+                            ->groupBy('second')
+                            ->orderBy('second','asc')
                             ->get();
                             break;
                 case "1":
-                    // month by day
+                    // hour by minute
                     $data = $query
-                            ->select(DB::raw('avg(gas), extract(day from datetime) as day'))
+                            ->select(DB::raw('avg(gas), extract(minute from datetime) as minute, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s'))
-                            ->groupBy('month')
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfHour()->format('Y-m-d H:i:s'))
+                            ->groupBy('minute')
+                            ->orderBy('minute','asc')
                             ->get();
                             break;
                 case "2":
-                    // year by monthes
+                    // day by hour
                     $data = $query
-                            ->select(DB::raw('avg(gas), extract(month from datetime) as month'))
+                            ->select(DB::raw('avg(gas), extract(hour from datetime) as hour, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s'))
-                            ->groupBy('month')
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s'))
+                            ->groupBy('hour')
+                            ->orderBy('hour','asc')
                             ->get();
                             break;
                 case "3":
+                    // month by day
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(day from datetime) as day, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s'))
+                            ->groupBy('day')
+                            ->orderBy('day','asc')
+                            ->get();
+                            break;
+                case "4":
+                    // year by monthes
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(month from datetime) as month, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s'))
+                            ->groupBy('month')
+                            ->orderBy('month','asc')
+                            ->get();
+                            break;
+                case "5":
                     // decade by Year
                     $data = $query
-                            ->select(DB::raw('avg(gas), extract(year from datetime) as year'))
+                            ->select(DB::raw('avg(gas), extract(year from datetime) as year, count(*)'))
                             ->where('datetime','>=',$start_time)
                             ->where('datetime','<=',Carbon::parse($start_time)->endOfDecade()->format('Y-m-d H:i:s'))
                             ->groupBy('year')
+                            ->orderBy('year','asc')
                             ->get();
                             break;
                 default:
