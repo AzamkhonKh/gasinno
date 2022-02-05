@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Lib\ApiWrapper;
+use App\Models\GISdata;
+use App\Models\DriverData;
+use App\Models\VehicleData;
+use App\Models\asyncActions;
+use App\Http\Requests\GeoQuery;
+use App\Models\DriverCarRelation;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\QRAssignRequest;
-use App\Http\Requests\GeoQuery;
-use App\Http\Requests\RegisterDeviceRequest;
 use App\Http\Requests\UpdateDeviceRequest;
-use App\Lib\ApiWrapper;
-use App\Models\asyncActions;
-use App\Models\DriverCarRelation;
-use App\Models\DriverData;
-use App\Models\GISdata;
-use App\Models\VehicleData;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\RegisterDeviceRequest;
+use Illuminate\Http\Request;
+use App\Http\Requests\API\Device\getStatisticsRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode as SimpleQR;
+use App\Models\IntegrationLog;
+use Carbon\Carbon;
 
 class DeviceController extends Controller
 {
@@ -38,11 +42,56 @@ class DeviceController extends Controller
         $car = VehicleData::query()->where('id',$data['car_id'])->update($data);
         return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
     }
-    public function destroy($device_id){
+    public function destroy(Request $request, $device_id){
         $car = VehicleData::query()->where('id',$device_id)->delete();
         $res = ['data' => $car];
         IntegrationLog::log($request, [$res, 'SUCCESS']);
         return ApiWrapper::sendResponse($res, 'SUCCESS');
+    }
+    
+    public function gasStatistics(getStatisticsRequest $reqquest){
+        $mode = $reqquest->input('mode');
+        $start_time = $reqquest->input('start_time');
+        $query = GISdata::query();
+        $message = 'SUCCESS';
+        try{
+            switch($mode){
+                case "0":
+                    // hour
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(hour from datetime) as hour'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s'))
+                            ->groupBy('hour')
+                            ->get();
+                            break;
+                case "1":
+                    // month
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(month from datetime) as month'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s'))
+                            ->groupBy('month')
+                            ->get();
+                            break;
+                case "2":
+                    // Year
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(month from datetime) as year'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s'))
+                            ->groupBy('year')
+                            ->get();
+                            break;
+                default:
+                    $data = "mode undefined !";
+    
+            }
+        }catch(\Exception $e){
+            $data = $e->getMessage();
+            $message = "ERROR";
+        }
+        return ApiWrapper::sendResponse(['data'=>$data,'mode' => print_r($mode,1), "start_time" => $start_time], $message);
     }
 
     public function getQRCode($id)

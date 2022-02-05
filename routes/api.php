@@ -48,6 +48,7 @@ Route::middleware('auth:api')->group(function () {
         return $user;
     });
     Route::get('/device', [DeviceController::class, 'request_geo']);
+    Route::get('/device/gas', [DeviceController::class, 'gasStatistics']);
     Route::post('/device/register', [RegisterController::class, 'register_device']);
     Route::post('/user/register', [RegisterController::class, 'register']);
 
