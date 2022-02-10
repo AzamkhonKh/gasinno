@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\API\Device;
 
-use App\Models\VehicleData;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GeoQuery extends FormRequest
+class getDriver extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,10 +27,6 @@ class GeoQuery extends FormRequest
     {
         return [
             'device_id' => ['required'],
-            'page' => ['integer'],
-            'page_size' => ['integer', 'min:0', 'max:10'],
-            'from' => ['date_format:Y-m-d H:i:s'],
-            'to' => ['date_format:Y-m-d H:i:s'],
         ];
     }
 }

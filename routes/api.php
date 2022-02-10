@@ -47,7 +47,10 @@ Route::middleware('auth:api')->group(function () {
         $user = User::where('id', auth()->id())->with(['vehicles'])->first()->append('Roles');
         return $user;
     });
-    Route::get('/device', [DeviceController::class, 'request_geo']);
+    Route::get('/device/paginate', [DeviceController::class, 'request_geo']);
+    Route::get('/device/driver', [DeviceController::class, 'getDeviceDriver']);
+    Route::post('/device/turnoff', [DeviceController::class, 'turnOffDriver']);
+    Route::get('/device/data', [DeviceController::class, 'deviceData']);
     Route::get('/device/gas', [DeviceController::class, 'gasStatistics']);
     Route::post('/device/register', [RegisterController::class, 'register_device']);
     Route::post('/user/register', [RegisterController::class, 'register']);

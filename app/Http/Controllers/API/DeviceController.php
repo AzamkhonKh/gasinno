@@ -19,6 +19,9 @@ use App\Http\Requests\API\Device\getStatisticsRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode as SimpleQR;
 use App\Models\IntegrationLog;
 use Carbon\Carbon;
+use App\Http\Requests\API\Device\getDriver;
+use App\Http\Requests\API\Device\getDevice;
+use App\Http\Requests\API\Device\sendTurnOff;
 
 class DeviceController extends Controller
 {
@@ -49,6 +52,43 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, 'SUCCESS');
     }
     
+    public function getDeviceDriver(getDriver $reqquest){
+        $res = array();
+        try {
+            // get device driver
+            $driver_id = DriverCarRelation::query()
+                ->where('vehicle_id',$request->input('device_id'))->pluck('driver_id')->toArray();
+            $res['data'] = DriverData::query()->whereIn('id',$driver_id)->first();
+            $msg = 'SUCCESS';
+        } catch (\Exception $e) {
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        return ApiWrapper::sendResponse($res, $msg);
+    }
+    
+    public function deviceData(getDevice $reqquest){
+        $res = array();
+        try {
+            $res['data'] = VehicleData::query()->find($request->input('device_id'));
+            $msg = 'SUCCESS';
+        } catch (\Exception $e) {
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        return ApiWrapper::sendResponse($res, $msg);
+    }
+    public function turnOffDriver(sendTurnOff $reqquest){
+        $res = array();
+        try {
+            $res = $this->turnoff_device($request);
+            $msg = 'SUCCESS';
+        } catch (\Exception $e) {
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        return ApiWrapper::sendResponse($res, $msg);
+    }
     public function gasStatistics(getStatisticsRequest $reqquest){
         $mode = $reqquest->input('mode');
         $start_time = $reqquest->input('start_time');
@@ -156,29 +196,9 @@ class DeviceController extends Controller
     public function request_geo(GeoQuery $request): \Illuminate\Http\JsonResponse
     {
         $res = array();
-        try {
-            switch ($request->input('mode', 0)) {
-                case 0:
-                    $res = $this->paginate_geo($request);
-                    break;
-                case 1:
-                    $res = $this->turnoff_device($request);
-                    break;
-                case 2:
-                    // get device driver
-                    $driver_id = DriverCarRelation::query()
-                        ->where('vehicle_id',$request->input('device_id'))->pluck('driver_id')->toArray();
-                    $res['data'] = DriverData::query()->whereIn('id',$driver_id)->first();
-                    break;
-                case 3:
-                    // get device data
-                    $res['data'] = VehicleData::query()->find($request->input('device_id'));
-                    break;
-                default:
-                    throw new \Exception("set mode please !");
-
-            }
-
+        try 
+        {
+            $res = $this->paginate_geo($request);
             $msg = 'SUCCESS';
         } catch (\Exception $e) {
             $res = ["message" => $e->getMessage()];
@@ -187,7 +207,7 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, $msg);
 
     }
-
+    
     private function paginate_geo(GeoQuery $request): array
     {
         $query = GISdata::query();
