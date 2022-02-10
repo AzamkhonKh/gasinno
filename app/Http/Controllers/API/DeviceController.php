@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use App\Http\Requests\API\Device\getDriver;
 use App\Http\Requests\API\Device\getDevice;
 use App\Http\Requests\API\Device\sendTurnOff;
+use App\Models\GasSuplliedData;
 
 class DeviceController extends Controller
 {
@@ -52,7 +53,7 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, 'SUCCESS');
     }
     
-    public function getDeviceDriver(getDriver $reqquest){
+    public function getDeviceDriver(getDriver $request){
         $res = array();
         try {
             // get device driver
@@ -67,7 +68,7 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, $msg);
     }
     
-    public function deviceData(getDevice $reqquest){
+    public function deviceData(getDevice $request){
         $res = array();
         try {
             $res['data'] = VehicleData::query()->find($request->input('device_id'));
@@ -78,7 +79,7 @@ class DeviceController extends Controller
         }
         return ApiWrapper::sendResponse($res, $msg);
     }
-    public function turnOffDriver(sendTurnOff $reqquest){
+    public function turnOffDriver(sendTurnOff $request){
         $res = array();
         try {
             $res = $this->turnoff_device($request);
@@ -97,61 +98,67 @@ class DeviceController extends Controller
         try{
             switch($mode){
                 case "0":
+                    $end_time = Carbon::parse($start_time)->endOfMinute()->format('Y-m-d H:i:s');
                     // minute by seconds
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(second from datetime) as second, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMinute()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('second')
                             ->orderBy('second','asc')
                             ->get();
                             break;
                 case "1":
+                    $end_time = Carbon::parse($start_time)->endOfHour()->format('Y-m-d H:i:s');
                     // hour by minute
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(minute from datetime) as minute, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfHour()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('minute')
                             ->orderBy('minute','asc')
                             ->get();
                             break;
                 case "2":
+                    $end_time = Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s');
                     // day by hour
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(hour from datetime) as hour, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('hour')
                             ->orderBy('hour','asc')
                             ->get();
                             break;
                 case "3":
+                    $end_time = Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s');
                     // month by day
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(day from datetime) as day, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('day')
                             ->orderBy('day','asc')
                             ->get();
                             break;
                 case "4":
+                    $end_time = Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s');
                     // year by monthes
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(month from datetime) as month, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('month')
                             ->orderBy('month','asc')
                             ->get();
                             break;
                 case "5":
+                    $end_time = Carbon::parse($start_time)->endOfDecade()->format('Y-m-d H:i:s');
                     // decade by Year
                     $data = $query
                             ->select(DB::raw('avg(gas), extract(year from datetime) as year, count(*)'))
                             ->where('datetime','>=',$start_time)
-                            ->where('datetime','<=',Carbon::parse($start_time)->endOfDecade()->format('Y-m-d H:i:s'))
+                            ->where('datetime','<=',$end_time)
                             ->groupBy('year')
                             ->orderBy('year','asc')
                             ->get();
@@ -164,7 +171,7 @@ class DeviceController extends Controller
             $data = $e->getMessage();
             $message = "ERROR";
         }
-        return ApiWrapper::sendResponse(['data'=>$data,'mode' => print_r($mode,1), "start_time" => $start_time], $message);
+        return ApiWrapper::sendResponse(['data'=>$data,'mode' => print_r($mode,1), "start_time" => $start_time,'end_time' => $end_time], $message);
     }
 
     public function getQRCode($id)
@@ -231,17 +238,41 @@ class DeviceController extends Controller
             'page_size' => $page_size
         ];
     }
+    public function paginate_supply(GeoQuery $request): array
+    {
+        $query = GasSuplliedData::query();
+        $query->where('vehicle_id', $request->input('device_id'));
+        if ($from = $request->input('from')) {
+            $query->where('datetime', '>=', $from);
+        }
 
-    private function turnoff_device(GeoQuery $request): array
+        if ($to = $request->input('to')) {
+            $query->where('datetime', '<=', $to);
+        }
+        $page_size = $request->input('page_size', 6);
+        $page = $request->input('page', 0);
+        $total = $query->count();
+        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->orderByDesc('datetime')->get();
+        return [
+            'data' => $data,
+            'total_data_count' => $total,
+            'total_page_count' => round($total / $page_size),
+            'page' => $page,
+            'page_size' => $page_size
+        ];
+    }
+
+    private function turnoff_device(sendTurnOff $request): array
     {
         $prev_action = asyncActions::query()
             ->where('vehicle_id', $request->input('device_id'))
             ->where('completed', 0)
             ->first();
+        $msg = $request->input('action') == 1 ? "turn off device" : "turn on device";
         if (empty($prev_action)) {
             $async = asyncActions::query()->create([
-                "command" => "turn off device",
-                "command_int" => 1,
+                "command" => $msg,
+                "command_int" => $request->input('action'),
                 "completed" => false,
                 "user_id" => auth()->id(),
                 "vehicle_id" => $request->input('device_id'),
@@ -251,7 +282,7 @@ class DeviceController extends Controller
         }
         return [
             'command' => $async,
-            'message' => 'will send turn off message'
+            'message' => 'will send ' . $msg
         ];
     }
 }

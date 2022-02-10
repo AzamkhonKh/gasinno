@@ -8,6 +8,7 @@ use App\Models\asyncActions;
 use App\Models\GISdata;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
+use App\Models\GasSuplliedData;
 
 class GeoController extends Controller
 {
@@ -25,8 +26,43 @@ class GeoController extends Controller
             $asyn_mode = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', false);
             $actions = $asyn_mode->count();
             if ($actions > 0) {
-                $res = ["message" => "TURNOFF"];
-                $msg = "TURNOFF";
+                $action = $asyn_mode->first();
+                $msg = $action->command_int == 1 ? "TURNOFF" : "TURNON";
+                $res = ["message" => $msg];
+                $asyn_mode->update([
+                    'completed' => true
+                ]);
+            } else {
+                $res = ["gis" => $gis];
+                $msg = "SUCCESS";
+            }
+        } catch (\Exception $e) {
+//            DB::rollBack();
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+//        DB::commit();
+        IntegrationLog::log($request, [$res, $msg]);
+
+        return ApiWrapper::sendResponse($res, $msg);
+    }
+    public function get_supply_geo(GetGeoRequest $request): \Illuminate\Http\JsonResponse
+    {
+//        DB::beginTransaction();
+        try {
+            $device_id = $request->input("device_id");
+            $data = $this->get_geo_req(
+                $request->all(),
+                $device_id,
+            );
+            $gis = GasSuplliedData::query()->create($data);
+            IPData::log($request, $device_id);
+            $asyn_mode = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', false);
+            $actions = $asyn_mode->count();
+            if ($actions > 0) {
+                $action = $asyn_mode->first();
+                $msg = $action->command_int == 1 ? "TURNOFF" : "TURNON";
+                $res = ["message" => $msg];
                 $asyn_mode->update([
                     'completed' => true
                 ]);

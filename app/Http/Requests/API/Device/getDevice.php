@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Device;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\VehicleData;
 
 class getDevice extends FormRequest
 {

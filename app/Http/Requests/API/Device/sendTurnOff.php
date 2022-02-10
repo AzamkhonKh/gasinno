@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Device;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\VehicleData;
 
 class sendTurnOff extends FormRequest
 {
@@ -27,6 +28,7 @@ class sendTurnOff extends FormRequest
     {
         return [
             'device_id' => ['required','exists:vehicle_data,id'],
+            'action' => ['required','integer','in:1,2'],
         ];
     }
 }
