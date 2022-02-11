@@ -27,11 +27,9 @@ Route::middleware('GeoMiddleware')->group(function () {
     Route::get('/geo-data-supply', [GeoController::class, 'get_supply_geo']);
 });
 Route::middleware('auth:api')->group(function () {
-    Route::get('/user', function (Request $request) {
-        $user = User::where('id', auth()->id())->with(['vehicles'])->first()->append('Roles');
-        return $user;
-    });
     Route::get('/device/paginate', [DeviceController::class, 'request_geo']);
+    Route::get('/device/paginate->supple', [DeviceController::class, 'paginate_supply']);
+    Route::get('/device/supply-paginate', [DeviceController::class, 'request_geo']);
     Route::get('/device/driver', [DeviceController::class, 'getDeviceDriver']);
     Route::post('/device/turnoff', [DeviceController::class, 'turnOffDriver']);
     Route::get('/device/data', [DeviceController::class, 'deviceData']);
