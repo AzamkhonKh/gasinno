@@ -46,7 +46,9 @@ class DeviceController extends Controller
 
     public function update(UpdateDeviceRequest $request){
         $data = $request->validated();
-        $car = VehicleData::query()->where('id',$data['car_id'])->update($data);
+        $car = VehicleData::query()
+        ->where('id',$data['id'])
+        ->update($data);
         return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
     }
     public function destroy(Request $request, $device_id){

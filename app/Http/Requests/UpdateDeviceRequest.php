@@ -24,12 +24,12 @@ class UpdateDeviceRequest extends FormRequest
     public function rules()
     {
         return [
-            'car_id' => ['required','integer','exists:vehicle_data,id'],
+            'id' => ['required','integer','exists:vehicle_data,id'],
             'balloon_volume' => ['required','numeric'],
-            'car_number' => ['required','string','unique:vehicle_data,car_number'],
+            'car_number' => ['required','string','max:10','unique:vehicle_data,car_number'],
             'year' => ['integer'],
             'car_model' => ['string'],
-            'owner_id' => [ 'integer'],
+            'owner_id' => [ 'integer','exists:users,id'],
             'texosmotr_valid_till' => ['date_format:Y-m-d'],
             'strxovka_valid_till' => ['date_format:Y-m-d'],
             'tonirovka_valid_till' => [ 'date_format:Y-m-d'],
