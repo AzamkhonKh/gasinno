@@ -28,10 +28,10 @@ Route::middleware('GeoMiddleware')->group(function () {
 });
 Route::middleware('auth:api')->group(function () {
     Route::get('/device/paginate', [DeviceController::class, 'request_geo']);
-    Route::get('/device/paginate->supple', [DeviceController::class, 'paginate_supply']);
+    Route::get('/device/paginate-supply', [DeviceController::class, 'paginate_supply']);
     Route::get('/device/supply-paginate', [DeviceController::class, 'request_geo']);
     Route::get('/device/driver', [DeviceController::class, 'getDeviceDriver']);
-    Route::post('/device/turnoff', [DeviceController::class, 'turnOffDriver']);
+    Route::post('/device/turnoff_on', [DeviceController::class, 'turnOffDevice']);
     Route::get('/device/data', [DeviceController::class, 'deviceData']);
     Route::get('/device/gas', [DeviceController::class, 'gasStatistics']);
     Route::post('/device/register', [RegisterController::class, 'register_device']);

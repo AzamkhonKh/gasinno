@@ -26,10 +26,10 @@ class GeoController extends Controller
             $asyn_mode = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', false);
             $actions = $asyn_mode->count();
             if ($actions > 0) {
-                $action = $asyn_mode->first();
+                $action = $asyn_mode->orderBy('id','asc')->first(); // last uncompleted action such as if first off and another on so it will complete first off and after that on
                 $msg = $action->command_int == 1 ? "TURNOFF" : "TURNON";
                 $res = ["message" => $msg];
-                $asyn_mode->update([
+                $action->update([
                     'completed' => true
                 ]);
             } else {

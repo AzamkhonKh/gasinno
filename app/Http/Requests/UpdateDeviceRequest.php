@@ -30,6 +30,10 @@ class UpdateDeviceRequest extends FormRequest
             'year' => ['integer'],
             'car_model' => ['string'],
             'owner_id' => [ 'integer'],
+            'texosmotr_valid_till' => ['date_format:Y-m-d'],
+            'strxovka_valid_till' => ['date_format:Y-m-d'],
+            'tonirovka_valid_till' => [ 'date_format:Y-m-d'],
+            'doverenost_valid_till' => [ 'date_format:Y-m-d'],
         ];
     }
 }

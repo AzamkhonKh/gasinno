@@ -79,7 +79,7 @@ class DeviceController extends Controller
         }
         return ApiWrapper::sendResponse($res, $msg);
     }
-    public function turnOffDriver(sendTurnOff $request){
+    public function turnOffDevice(sendTurnOff $request){
         $res = array();
         try {
             $res = $this->turnoff_device($request);
@@ -180,9 +180,6 @@ class DeviceController extends Controller
         if (empty($device)) {
             return ApiWrapper::sendResponse(['message' => 'could not found device with this id'], 'ERROR');
         }
-
-//        $qr = SimpleQR::size(500)->generate($device->qr_text);
-//        print_r($qr);
         return SimpleQR::size(500)->generate($device->qr_text);
     }
 
@@ -264,15 +261,17 @@ class DeviceController extends Controller
 
     private function turnoff_device(sendTurnOff $request): array
     {
+        $command_int = $request->input('action') == "off" ? 1 : 2;
         $prev_action = asyncActions::query()
             ->where('vehicle_id', $request->input('device_id'))
+            ->where('command_int', $command_int)
             ->where('completed', 0)
             ->first();
-        $msg = $request->input('action') == 1 ? "turn off device" : "turn on device";
+        $msg = $request->input('action') == "off" ? "turn off device" : "turn on device";
         if (empty($prev_action)) {
             $async = asyncActions::query()->create([
                 "command" => $msg,
-                "command_int" => $request->input('action'),
+                "command_int" => $command_int,
                 "completed" => false,
                 "user_id" => auth()->id(),
                 "vehicle_id" => $request->input('device_id'),
@@ -282,7 +281,7 @@ class DeviceController extends Controller
         }
         return [
             'command' => $async,
-            'message' => 'will send ' . $msg
+            'message' => 'will send ' . $async->command
         ];
     }
 }

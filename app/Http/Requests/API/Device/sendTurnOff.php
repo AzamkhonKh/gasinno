@@ -28,7 +28,7 @@ class sendTurnOff extends FormRequest
     {
         return [
             'device_id' => ['required','exists:vehicle_data,id'],
-            'action' => ['required','integer','in:1,2'],
+            'action' => ['required','string','in:on,off'],
         ];
     }
 }

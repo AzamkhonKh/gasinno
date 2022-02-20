@@ -21,6 +21,10 @@ class VehicleData extends Model
         "qr_text",
         "year",
         'deleted_at',
+        "texosmotr_valid_till",
+        "strxovka_valid_till",
+        "tonirovka_valid_till",
+        "doverenost_valid_till",
     ];
 
     protected $hidden = [
