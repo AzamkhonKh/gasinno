@@ -23,6 +23,9 @@ use App\Http\Requests\API\Device\getDriver;
 use App\Http\Requests\API\Device\getDevice;
 use App\Http\Requests\API\Device\sendTurnOff;
 use App\Models\GasSuplliedData;
+use App\Http\Requests\API\Device\sendUserDevicessTurnAction;
+use Illuminate\Foundation\Http\FormRequest;
+use TheSeer\Tokenizer\Exception;
 
 class DeviceController extends Controller
 {
@@ -90,6 +93,25 @@ class DeviceController extends Controller
         }
         return ApiWrapper::sendResponse($res, $msg);
     }
+    public function turnOffUserDevices(sendUserDevicessTurnAction $request){
+        $res = array();
+        try {
+            DB::beginTransaction();
+            $owner_id = $request->has('owner_id') ? $request->input('owner_id') : auth()->id();
+            $device_ids = VehicleData::query()->where('owner_id',$owner_id)->pluck('id')->toArray();
+            foreach($device_ids as $id){
+                $res[] = $this->turnoff_device($request,$id);
+            }
+            $msg = 'SUCCESS';
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        return ApiWrapper::sendResponse($res, $msg);
+    }
+    
     public function gasStatistics(getStatisticsRequest $reqquest){
         $mode = $reqquest->input('mode');
         $start_time = $reqquest->input('start_time');
@@ -259,11 +281,15 @@ class DeviceController extends Controller
         ];
     }
 
-    private function turnoff_device(sendTurnOff $request): array
+    private function turnoff_device(FormRequest $request,$id = null): array
     {
+        $vehicle_id = !is_null($id) ? $id : $request->input('device_id');
+        if(is_null($vehicle_id)) {
+            throw new Exception("vehicle id could not be null");
+        }
         $command_int = $request->input('action') == "off" ? 1 : 2;
         $prev_action = asyncActions::query()
-            ->where('vehicle_id', $request->input('device_id'))
+            ->where('vehicle_id', $vehicle_id)
             ->where('command_int', $command_int)
             ->where('completed', 0)
             ->first();
@@ -274,7 +300,7 @@ class DeviceController extends Controller
                 "command_int" => $command_int,
                 "completed" => false,
                 "user_id" => auth()->id(),
-                "vehicle_id" => $request->input('device_id'),
+                "vehicle_id" => $vehicle_id,
             ]);
         } else {
             $async = $prev_action;

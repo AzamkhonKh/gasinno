@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/device/supply-paginate', [DeviceController::class, 'request_geo']);
     Route::get('/device/driver', [DeviceController::class, 'getDeviceDriver']);
     Route::post('/device/turnoff_on', [DeviceController::class, 'turnOffDevice']);
+    Route::post('/user/devices_off_on', [DeviceController::class, 'turnOffUserDevices']);
     Route::get('/device/data', [DeviceController::class, 'deviceData']);
     Route::get('/device/gas', [DeviceController::class, 'gasStatistics']);
     Route::post('/device/register', [RegisterController::class, 'register_device']);
