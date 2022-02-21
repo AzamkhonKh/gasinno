@@ -98,8 +98,8 @@ class DeviceController extends Controller
     public function turnOffUserDevices(sendUserDevicessTurnAction $request){
         $res = array();
         try {
+            $owner_id = auth()->user()->checkRole('administrator') && $request->has('owner_id') ? $request->input('owner_id') : auth()->id();
             DB::beginTransaction();
-            $owner_id = $request->has('owner_id') ? $request->input('owner_id') : auth()->id();
             $device_ids = VehicleData::query()->where('owner_id',$owner_id)->pluck('id')->toArray();
             foreach($device_ids as $id){
                 $res[] = $this->turnoff_device($request,$id);
