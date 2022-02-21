@@ -17,7 +17,6 @@ class VehicleData extends Model
         "car_number",
         "car_model",
         "token",
-        "verified",
         "qr_text",
         "year",
         'deleted_at',
@@ -31,6 +30,7 @@ class VehicleData extends Model
         'token',
         'created_at',
         'updated_at',
+        "verified",
 
         'qr_text'
     ];
