@@ -27,7 +27,7 @@ class DriverData extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-    protected $appends = ['image','license','vehicle_data'];
+    protected $appends = ['image','licenseData','vehicle_data'];
 
     public function driverCarRelation()
     {
@@ -48,7 +48,7 @@ class DriverData extends Model
         }
         return asset('/uploads/' . $path);
     }
-    public function getLicenseAttribute(): object
+    public function getLicenseDataAttribute(): object
     {
         return (object)json_decode($this->licenseData);
     }
