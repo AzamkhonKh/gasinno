@@ -17,6 +17,7 @@ class VehicleData extends Model
         "car_number",
         "car_model",
         "token",
+        "verified",
         "qr_text",
         "year",
         'deleted_at',
@@ -25,13 +26,12 @@ class VehicleData extends Model
         "tonirovka_valid_till",
         "doverenost_valid_till",
     ];
-
+    
     protected $hidden = [
         'token',
         'created_at',
         'updated_at',
         "verified",
-
         'qr_text'
     ];
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo

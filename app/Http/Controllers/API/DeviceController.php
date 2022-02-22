@@ -43,6 +43,12 @@ class DeviceController extends Controller
         DB::commit();
         return ApiWrapper::sendResponse(['data' => $drivers], 'SUCCESS');
     }
+    public function getunregisteredDevices(): \Illuminate\Http\JsonResponse
+    {
+        $device = VehicleData::query()->whereNull('owner_id')->get();
+
+        return ApiWrapper::sendResponse(['data' => $device], 'SUCCESS');
+    }
 
     public function update(UpdateDeviceRequest $request){
         $data = $request->validated();
