@@ -28,6 +28,9 @@ class RegisterController extends Controller
             if (!isset($input['balloon_volume'])) {
                 $input['balloon_volume'] = 1;
             }
+            if (!isset($input['owner_id'])) {
+                $input['owner_id'] = auth()->id();
+            }
             $token = Str::random(80);
             $input['token'] = Hash::make($token);
             $car = VehicleData::create($input);
