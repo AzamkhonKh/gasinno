@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\DriverCarRelation;
 
 class RegisterController extends Controller
 {
@@ -31,9 +32,22 @@ class RegisterController extends Controller
             if (!isset($input['owner_id'])) {
                 $input['owner_id'] = auth()->id();
             }
+            
             $token = Str::random(80);
             $input['token'] = Hash::make($token);
             $car = VehicleData::create($input);
+            
+            if(isset($data['driver_id'])){
+                DriverCarRelation::query()->createOrUpdate(
+                    [
+                        'vehicle_id' => $car->id
+                    ],
+                    [
+                        'driver_id' => $data['driver_id']
+                    ]
+                );
+            }
+
             $success['token'] = $token;
             $success['device_id'] = $car->id;
             $res = $success;

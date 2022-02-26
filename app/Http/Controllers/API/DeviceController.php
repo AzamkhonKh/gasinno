@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\QRAssignRequest;
 use App\Http\Requests\UpdateDeviceRequest;
-use App\Http\Requests\RegisterDeviceRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\Device\getStatisticsRequest;
 use SimpleSoftwareIO\QrCode\Facades\QrCode as SimpleQR;
@@ -55,6 +54,16 @@ class DeviceController extends Controller
         $car = VehicleData::query()
         ->where('id',$data['id'])
         ->update($data);
+        if(isset($data['driver_id'])){
+            DriverCarRelation::query()->createOrUpdate(
+                [
+                    'vehicle_id' => $data['id']
+                ],
+                [
+                    'driver_id' => $data['driver_id']
+                ]
+            );
+        }
         return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
     }
     public function destroy(Request $request, $device_id){
