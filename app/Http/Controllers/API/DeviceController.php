@@ -133,6 +133,91 @@ class DeviceController extends Controller
         $msg = 'SUCCESS';
         return ApiWrapper::sendResponse(['device_data' => $data], $msg);
     }
+
+    public function gasSupplyStatistics(getStatisticsRequest $reqquest){
+        $mode = $reqquest->input('mode');
+        $start_time = $reqquest->input('start_time');
+        $query = GasSuplliedData::query();
+        $message = 'SUCCESS';
+        try{
+            switch($mode){
+                case "0":
+                    $end_time = Carbon::parse($start_time)->endOfMinute()->format('Y-m-d H:i:s');
+                    // minute by seconds
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(second from datetime) as second, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('second')
+                            ->orderBy('second','asc')
+                            ->get();
+                            break;
+                case "1":
+                    $end_time = Carbon::parse($start_time)->endOfHour()->format('Y-m-d H:i:s');
+                    // hour by minute
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(minute from datetime) as minute, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('minute')
+                            ->orderBy('minute','asc')
+                            ->get();
+                            break;
+                case "2":
+                    $end_time = Carbon::parse($start_time)->endOfDay()->format('Y-m-d H:i:s');
+                    // day by hour
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(hour from datetime) as hour, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('hour')
+                            ->orderBy('hour','asc')
+                            ->get();
+                            break;
+                case "3":
+                    $end_time = Carbon::parse($start_time)->endOfMonth()->format('Y-m-d H:i:s');
+                    // month by day
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(day from datetime) as day, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('day')
+                            ->orderBy('day','asc')
+                            ->get();
+                            break;
+                case "4":
+                    $end_time = Carbon::parse($start_time)->endOfYear()->format('Y-m-d H:i:s');
+                    // year by monthes
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(month from datetime) as month, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('month')
+                            ->orderBy('month','asc')
+                            ->get();
+                            break;
+                case "5":
+                    $end_time = Carbon::parse($start_time)->endOfDecade()->format('Y-m-d H:i:s');
+                    // decade by Year
+                    $data = $query
+                            ->select(DB::raw('avg(gas), extract(year from datetime) as year, count(*)'))
+                            ->where('datetime','>=',$start_time)
+                            ->where('datetime','<=',$end_time)
+                            ->groupBy('year')
+                            ->orderBy('year','asc')
+                            ->get();
+                            break;
+                default:
+                    $data = "mode undefined !";
+    
+            }
+        }catch(\Exception $e){
+            $data = $e->getMessage();
+            $message = "ERROR";
+        }
+        return ApiWrapper::sendResponse(['data'=>$data,'mode' => print_r($mode,1), "start_time" => $start_time,'end_time' => $end_time], $message);
+    }
+
     public function gasStatistics(getStatisticsRequest $reqquest){
         $mode = $reqquest->input('mode');
         $start_time = $reqquest->input('start_time');

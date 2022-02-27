@@ -35,6 +35,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/user/devices_off_on', [DeviceController::class, 'turnOffUserDevices']);
     Route::get('/device/data', [DeviceController::class, 'deviceData']);
     Route::get('/device/gas', [DeviceController::class, 'gasStatistics']);
+    Route::get('/device/gas-supply', [DeviceController::class, 'gasSupplyStatistics']);
     
     Route::get('/device/getunregisteredDevices', [DeviceController::class, 'getunregisteredDevices'])->middleware('isAdmin');
 
