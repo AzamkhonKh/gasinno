@@ -24,7 +24,7 @@ class SearchVehicle extends FormRequest
     public function rules()
     {
         return [
-            'car_number' => ['required'],
+            'car_number' => ['string'],
             'strict' => ['in:1,0'],
             'page' => ['integer'],
             'page_size' => ['integer'],
