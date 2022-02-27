@@ -128,7 +128,11 @@ class DeviceController extends Controller
         }
         return ApiWrapper::sendResponse($res, $msg);
     }
-    
+    public function current_relay_state($id){
+        $data = GISdata::query()->where('vehicle_id',$id)->orderByDesc('id')->select(['relay_state','datetime'])->first();
+        $msg = 'SUCCESS';
+        return ApiWrapper::sendResponse(['device_data' => $data], $msg);
+    }
     public function gasStatistics(getStatisticsRequest $reqquest){
         $mode = $reqquest->input('mode');
         $start_time = $reqquest->input('start_time');

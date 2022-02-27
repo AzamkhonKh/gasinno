@@ -30,6 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/device/paginate', [DeviceController::class, 'request_geo']);
     Route::get('/device/paginate-supply', [DeviceController::class, 'paginate_supply']);
     Route::get('/device/driver', [DeviceController::class, 'getDeviceDriver']);
+    Route::get('/device/current_rs/{id}', [DeviceController::class, 'current_relay_state']);
     Route::post('/device/turnoff_on', [DeviceController::class, 'turnOffDevice']);
     Route::post('/user/devices_off_on', [DeviceController::class, 'turnOffUserDevices']);
     Route::get('/device/data', [DeviceController::class, 'deviceData']);
