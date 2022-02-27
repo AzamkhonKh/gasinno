@@ -32,7 +32,7 @@ class UserController extends Controller
         $page_size = $request->input('page_size', 10);
         $page = $request->input('page', 0);
         $total = $query->count();
-        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->orderByDesc('datetime')->get();
+        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->get();
         return [
             'data' => $data,
             'total_data_count' => $total,
