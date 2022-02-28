@@ -38,7 +38,7 @@ class RegisterController extends Controller
             $car = VehicleData::create($input);
             
             if(isset($data['driver_id'])){
-                DriverCarRelation::query()->createOrUpdate(
+                DriverCarRelation::query()->updateOrCreate(
                     [
                         'vehicle_id' => $car->id
                     ],
