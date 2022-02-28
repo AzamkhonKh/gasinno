@@ -386,6 +386,30 @@ class DeviceController extends Controller
             'page_size' => $page_size
         ];
     }
+    public function show_device_log(GeoQuery $request): array
+    {
+        $query = asyncActions::query();
+        $query->where('vehicle_id', $request->input('device_id'));
+        $query->where('user_id', auth()->id());
+        if ($from = $request->input('from')) {
+            $query->where('created_at', '>=', $from);
+        }
+
+        if ($to = $request->input('to')) {
+            $query->where('created_at', '<=', $to);
+        }
+        $page_size = $request->input('page_size', 6);
+        $page = $request->input('page', 0);
+        $total = $query->count();
+        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->orderByDesc('created_at')->get();
+        return [
+            'data' => $data,
+            'total_data_count' => $total,
+            'total_page_count' => round($total / $page_size),
+            'page' => $page,
+            'page_size' => $page_size
+        ];
+    }
 
     private function turnoff_device(FormRequest $request,$id = null): array
     {
