@@ -29,6 +29,7 @@ class UpdateDeviceRequest extends FormRequest
             'car_number' => ['required','string'],
             'year' => ['integer'],
             'car_model' => ['string'],
+            'driver_id' => ['integer','exists:driver_data,id'],
             'owner_id' => [ 'integer','exists:users,id'],
             'texosmotr_valid_till' => ['date_format:Y-m-d'],
             'strxovka_valid_till' => ['date_format:Y-m-d'],

@@ -34,13 +34,22 @@ class VehicleData extends Model
         "verified",
         'qr_text'
     ];
+
+    protected $with = ['current_rs'];
+
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class,'id','owner_id');
     }
+    
     public function geo(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(GISdata::class,'vehicle_id','id');
+    }
+
+    public function current_rs(): \Illuminate\Database\Eloquent\Relations\hasOne
+    {
+        return $this->hasOne(GISdata::class,'vehicle_id','id')->latest();
     }
 
 

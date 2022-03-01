@@ -11,10 +11,6 @@ class asyncActions extends Model
 
     protected $table = 'async_actions';
 
-    protected $hidden = [
-        'created_at',
-        'updated_at'
-    ];
     protected $fillable = [
         "command",
         "command_int",
