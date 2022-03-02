@@ -36,6 +36,8 @@ class GeoController extends Controller
                 $res = ["gis" => $gis];
                 $msg = "SUCCESS";
             }
+            $relay_state = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', true)->first();
+            $relay_state_msg = empty($relay_state) ? $action->command_int == 1 ? "TURNOFF" : "TURNON" : "TURNON";
         } catch (\Exception $e) {
 //            DB::rollBack();
             $res = ["message" => $e->getMessage()];
@@ -44,7 +46,7 @@ class GeoController extends Controller
 //        DB::commit();
         IntegrationLog::log($request, [$res, $msg]);
 
-        return ApiWrapper::sendResponse($res, $msg);
+        return ApiWrapper::sendResponse($res, $msg,201,$relay_state_msg);
     }
     public function get_supply_geo(GetGeoRequest $request): \Illuminate\Http\JsonResponse
     {
