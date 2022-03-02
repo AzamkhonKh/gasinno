@@ -49,5 +49,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/driver/assign', [DriverController::class, 'assign_driver']);
     Route::apiResource('/driver', DriverController::class,['except'=>['index']]);
     Route::get('/user/drivers', [UserController::class, 'getDrivers']);
+    Route::post('/user/updateData/{id}', [UserController::class, 'updateData'])->middleware('isAdmin');
     Route::get('/user/vehicles', [UserController::class, 'getVehicle']);
 });

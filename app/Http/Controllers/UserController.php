@@ -9,6 +9,13 @@ use App\Models\VehicleData;
 use Illuminate\Http\Request;
 use App\Http\Requests\API\USER\GetVehicles;
 use App\Http\Requests\API\USER\SearchVehicle;
+use App\Http\Requests\API\RegisterRequest;
+use Illuminate\Support\Facades\DB;
+use App\Models\IPData;
+use App\Models\IntegrationLog;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -21,6 +28,31 @@ class UserController extends Controller
     public function getVehicle(SearchVehicle $request): \Illuminate\Http\JsonResponse
     {
         return ApiWrapper::sendResponse(['vehicles' => $this->paginateVehicle($request)],'SUCCESS');
+    }
+    public function updateData(RegisterRequest $request,$id): \Illuminate\Http\JsonResponse
+    {
+        
+        DB::beginTransaction();
+        $request->request->add(['mac' => User::getMac()]);
+        IPData::log($request);
+        try {
+            $input = $request->all();
+            $input['api_token'] = Str::random(50);
+            $input['password'] = Hash::make($input['password']);
+            $user = User::updateOrCreate(['id'=>$id],$input);
+            $user->save();
+            $success['token'] = $user->api_token;
+            $success['name'] = $user->name;
+            $res = $success;
+            $msg = "SUCCESS";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+        }
+        DB::commit();
+        IntegrationLog::log($request, [$res, $msg]);
+        return ApiWrapper::sendResponse($res, $msg);
     }
     private function paginateVehicle(SearchVehicle $request): array
     {
