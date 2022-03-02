@@ -20,14 +20,13 @@ class DriverData extends Model
     ];
     protected $hidden = [
         'avatar_id',
-        'deleted_at',
-        'licenseData'
+        'deleted_at'
     ];
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-    protected $appends = ['image','licenseData','vehicle_data'];
+    protected $appends = ['image','vehicle_data'];
 
     public function driverCarRelation()
     {
