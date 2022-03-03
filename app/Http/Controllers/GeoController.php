@@ -37,11 +37,12 @@ class GeoController extends Controller
                 $msg = "SUCCESS";
             }
             $relay_state = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', true)->first();
-            $relay_state_msg = !empty($relay_state) ? $action->command_int == 1 ? "TURNOFF" : "TURNON" : "TURNON";
+            $relay_state_msg = !empty($relay_state) ? isset($action) && $action->command_int == 1 ? "TURNOFF" : "TURNON" : "TURNON";
         } catch (\Exception $e) {
 //            DB::rollBack();
             $res = ["message" => $e->getMessage()];
             $msg = "ERROR";
+            $relay_state_msg = "ERROR";
         }
 //        DB::commit();
         IntegrationLog::log($request, [$res, $msg]);
