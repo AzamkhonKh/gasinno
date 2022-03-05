@@ -14,19 +14,20 @@ class DriverData extends Model
         'name',
         'surname',
         'age',
-        'phone',
         'licenseData',
+        'phone',
         'owner_id'
     ];
     protected $hidden = [
         'avatar_id',
+        'licenseData',
         'deleted_at'
     ];
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-    protected $appends = ['image','vehicle_data'];
+    protected $appends = ['image','vehicle_data','licenseType'];
 
     public function driverCarRelation()
     {
@@ -47,9 +48,18 @@ class DriverData extends Model
         }
         return asset('/uploads/' . $path);
     }
-    public function getLicenseDataAttribute(): object
+    public function getLicenseTypeAttribute()
     {
-        return (object)json_decode($this->licenseData);
+        if(isset($this->licenseData)){
+            $decoded = json_decode($this->licenseData);
+        }else{
+            $decoded = ["not exists"];
+        }
+        return 
+            isset($decoded->type) && !empty($decoded->type) 
+            ? $decoded->type 
+            : $decoded;
+        // return print_r($decoded,1);
     }
     public function getVehicleDataAttribute()
     {

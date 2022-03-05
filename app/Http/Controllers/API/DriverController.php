@@ -39,7 +39,7 @@ class DriverController extends Controller
             $validated_data['avatar_id'] = $file_data->id;
         }
         $validated_data['owner_id'] = auth()->id();
-        $validated_data['licenseData'] = json_encode($validated_data['licenseData']);
+        $validated_data['licenseData'] = json_encode(['type'=>$validated_data['licenseType']]);
         $driver = DriverData::query()->create($validated_data);
 
         return ApiWrapper::sendResponse(['driver_data' => $driver], 'SUCCESS');
