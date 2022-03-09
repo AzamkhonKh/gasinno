@@ -56,7 +56,7 @@ class DriverData extends Model
             $decoded = ["not exists"];
         }
         return 
-            isset($decoded->type) && !empty($decoded->type) 
+            isset($decoded->type) 
             ? $decoded->type 
             : $decoded;
         // return print_r($decoded,1);
