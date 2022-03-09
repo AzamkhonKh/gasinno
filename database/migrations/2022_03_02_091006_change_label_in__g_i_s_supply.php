@@ -13,8 +13,10 @@ class ChangeLabelInGISSupply extends Migration
      */
     public function up()
     {
-        Schema::table('_g_i_s_supply', function (Blueprint $table) {
-            $table->string('label')->nullable()->change();
+        Schema::table('gas_supllied_data', function (Blueprint $table) {
+            // $table->drop('label');
+            // $table->string('label')->nullable();
+
 
         });
     }
@@ -26,8 +28,8 @@ class ChangeLabelInGISSupply extends Migration
      */
     public function down()
     {
-        Schema::table('_g_i_s_supply', function (Blueprint $table) {
-            $table->string('label')->change();
+        Schema::table('gas_supllied_data', function (Blueprint $table) {
+            // $table->drop('label');
         });
     }
 }

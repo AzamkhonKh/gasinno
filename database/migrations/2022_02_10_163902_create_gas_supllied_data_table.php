@@ -15,7 +15,7 @@ class CreateGasSuplliedDataTable extends Migration
     {
         Schema::create('gas_supllied_data', function (Blueprint $table) {
             $table->id();
-            $table->string('label')->default("gas station place");
+            $table->string('label')->nullable();
             $table->float('lat',20,10)->comment('latitude - shirina');
             $table->float('long',20,10)->comment('longtitude - dolgota');
             $table->float('gas')->comment('given pressure of gas in system');
