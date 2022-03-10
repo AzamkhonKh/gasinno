@@ -27,6 +27,6 @@ class asyncActions extends Model
 
     public function device(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(VehicleData::class,'id','vehicle_id');
+        return $this->belongsTo(VehicleData::class,'vehicle_id','id');
     }
 }

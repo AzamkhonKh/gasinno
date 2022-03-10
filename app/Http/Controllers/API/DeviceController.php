@@ -50,7 +50,7 @@ class DeviceController extends Controller
     }
 
     public function update(UpdateDeviceRequest $request){
-        $data = $request->validated();
+            $data = $request->validated();
         $car = VehicleData::query()
         ->where('id',$data['id'])
         ->update($data);
@@ -388,9 +388,19 @@ class DeviceController extends Controller
     }
     public function show_device_log(GeoQuery $request): array
     {
-        $query = asyncActions::query();
-        $query->where('vehicle_id', $request->input('device_id'));
-        $query->where('user_id', auth()->id());
+        $query = DB::table("async_actions as aa")
+        ->select([
+                    "vd.car_number as vehicle_number",
+                    "vd.car_model as vehicle_model",
+                    "aa.vehicle_id",
+                    "aa.user_id",
+                    "aa.command",
+                    "aa.updated_at as action_time"
+                ])
+                ->addSelect(DB::raw("CONCAT(u.firstname,' ',u.lastname) as user_fullname"))
+                ->addSelect(DB::raw("CONCAT(dd.name,' ',dd.surname) as driver_fullname"));
+        $query->where('aa.vehicle_id', $request->input('device_id'));
+        $query->where('user_id', auth()->id() ?? 1);
         if ($from = $request->input('from')) {
             $query->where('created_at', '>=', $from);
         }
@@ -398,10 +408,15 @@ class DeviceController extends Controller
         if ($to = $request->input('to')) {
             $query->where('created_at', '<=', $to);
         }
+
+        $query->join("users as u","u.id","aa.user_id")
+        ->join("vehicle_data as vd","vd.id","aa.vehicle_id")
+        ->join("driver_car_relations as dcr","dcr.id",DB::raw("(select MAX(\"dcr2\".\"id\") from \"driver_car_relations\" as \"dcr2\" where  \"dcr2\".\"vehicle_id\" = \"aa\".\"vehicle_id\")"))
+        ->join("driver_data as dd","dd.id","dcr.driver_id");
         $page_size = $request->input('page_size', 6);
         $page = $request->input('page', 0);
         $total = $query->count();
-        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->orderByDesc('created_at')->get();
+        $data = $query->offset(($page - 1) * $page_size)->limit($page_size)->orderByDesc('aa.created_at')->get();
         return [
             'data' => $data,
             'total_data_count' => $total,

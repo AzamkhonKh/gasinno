@@ -51,6 +51,14 @@ class VehicleData extends Model
     {
         return $this->hasOne(GISdata::class,'vehicle_id','id')->latest();
     }
+    public function getDriverAttribute()
+    {
+        return DriverData::query()
+                ->where('id',
+                            DriverCarRelation::query()
+                                ->where('vehicle_id',$this->id)->latest()->driver_id ?? null)
+                ->latest();
+    }
 
 
     public static function boot()
