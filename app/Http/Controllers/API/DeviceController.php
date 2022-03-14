@@ -130,10 +130,10 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, $msg);
     }
     
-    public function show(getDevice $request,$id){
+    public function show($id){
         $res = array();
         try {
-            $res['data'] = VehicleData::query()->find($request->input('device_id'));
+            $res['data'] = VehicleData::query()->find($id);
             $msg = 'SUCCESS';
         } catch (\Exception $e) {
             $res = ["message" => $e->getMessage()];
