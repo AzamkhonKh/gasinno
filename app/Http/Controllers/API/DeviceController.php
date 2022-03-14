@@ -99,7 +99,7 @@ class DeviceController extends Controller
         ->where('id',$data['id'])
         ->update($data);
         if(!is_null($driver_id)){
-            DriverCarRelation::query()->createOrUpdate(
+            DriverCarRelation::query()->updateOrCreate(
                 [
                     'vehicle_id' => $data['id']
                 ],
