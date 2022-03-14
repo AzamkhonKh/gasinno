@@ -36,6 +36,8 @@ class VehicleData extends Model
     ];
 
     protected $with = ['current_rs'];
+    protected $appends = ['api_token'];
+
 
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -60,6 +62,9 @@ class VehicleData extends Model
                 ->latest();
     }
 
+    public function getapiTokenAttribute(){
+        return auth()->check() && auth()->user()->checkRole('administrator') ? $this->token : null;
+    }
 
     public static function boot()
     {
