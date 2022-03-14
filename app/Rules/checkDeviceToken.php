@@ -31,7 +31,7 @@ class checkDeviceToken implements Rule
     {
         if (empty($this->model) || !isset($this->model->token)) return false;
 
-        return Hash::check($value,$this->model->token);
+        return $value == $this->model->token;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\API\GeoMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use App\Http\Middleware\API\isAdmin;
+use App\Http\Middleware\API\isOwnerOrAdmin;
 
 class Kernel extends HttpKernel
 {
@@ -67,5 +68,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'GeoMiddleware' => GeoMiddleware::class,
         'isAdmin' => isAdmin::class,
+        'isOwnerOrAdmin' => isOwnerOrAdmin::class,
     ];
 }

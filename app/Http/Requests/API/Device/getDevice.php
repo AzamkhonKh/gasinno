@@ -27,7 +27,7 @@ class getDevice extends FormRequest
     public function rules()
     {
         return [
-            'device_id' => ['required','exists:vehicle_data,id'],
+            'device_id' => ['required'],
         ];
     }
 }

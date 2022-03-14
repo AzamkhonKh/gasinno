@@ -19,47 +19,6 @@ use App\Models\DriverCarRelation;
 
 class RegisterController extends Controller
 {
-    public function register_device(RegisterDeviceRequest $request): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $input = $request->validated();
-            if (!isset($input['car_number'])) {
-                $input['car_number'] = Str::random(10);
-            }
-            if (!isset($input['balloon_volume'])) {
-                $input['balloon_volume'] = 1;
-            }
-            if (!isset($input['owner_id'])) {
-                $input['owner_id'] = auth()->id();
-            }
-            
-            $token = Str::random(80);
-            $input['token'] = Hash::make($token);
-            $car = VehicleData::create($input);
-            
-            if(isset($data['driver_id'])){
-                DriverCarRelation::query()->updateOrCreate(
-                    [
-                        'vehicle_id' => $car->id
-                    ],
-                    [
-                        'driver_id' => $data['driver_id']
-                    ]
-                );
-            }
-
-            $success['token'] = $token;
-            $success['device_id'] = $car->id;
-            $res = $success;
-            $msg = "SUCCESS";
-        } catch (\Exception $e) {
-            $res = ["message" => $e->getMessage()];
-            $msg = "ERROR";
-        }
-        IntegrationLog::log($request, [$res, $msg]);
-        return ApiWrapper::sendResponse($res, $msg);
-    }
-
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();

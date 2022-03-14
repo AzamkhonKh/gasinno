@@ -29,8 +29,8 @@ class RegisterDeviceRequest extends FormRequest
         return [
             'owner_id' => [ 'integer','exists:users,id'],
             'driver_id' => ['integer','exists:driver_data,id'],
-            'balloon_volume' => ['required','numeric'],
-            'car_number' => ['required','string'],
+            'balloon_volume' => ['numeric'],
+            'car_number' => ['string'],
             'car_model' => ['string'],
             'year' => ['integer'],
             'texosmotr_valid_till' => ['date_format:Y-m-d'],
