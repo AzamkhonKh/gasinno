@@ -93,16 +93,18 @@ class DeviceController extends Controller
 
     public function update(UpdateDeviceRequest $request){
         $data = $request->validated();
+        $driver_id = $data['driver_id'] ?? null;
+        unset($data['driver_id']);
         $car = VehicleData::query()
         ->where('id',$data['id'])
         ->update($data);
         if(isset($data['driver_id'])){
             DriverCarRelation::query()->createOrUpdate(
                 [
-                    'vehicle_id' => $data['id']
+                    'vehicle_id' => $car->id
                 ],
                 [
-                    'driver_id' => $data['driver_id']
+                    'driver_id' => $driver_id
                 ]
             );
         }
