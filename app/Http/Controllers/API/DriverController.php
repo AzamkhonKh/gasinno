@@ -87,8 +87,8 @@ class DriverController extends Controller
                 }
             }
         }
-        if (isset($validated_data['licenseData'])){
-            $validated_data['licenseData'] = json_encode($validated_data['licenseData']);
+        if (isset($validated_data['licenseType'])){
+            $validated_data['licenseData'] = json_encode(['type' => $validated_data['licenseType']]);
         }
 
         $driver->update($validated_data);
