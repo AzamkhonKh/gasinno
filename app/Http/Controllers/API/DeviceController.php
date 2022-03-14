@@ -101,14 +101,14 @@ class DeviceController extends Controller
         if(isset($data['driver_id'])){
             DriverCarRelation::query()->createOrUpdate(
                 [
-                    'vehicle_id' => $car->id
+                    'vehicle_id' => $data['id']
                 ],
                 [
                     'driver_id' => $driver_id
                 ]
             );
         }
-        return ApiWrapper::sendResponse(['data' => $car], 'SUCCESS');
+        return ApiWrapper::sendResponse(['data' => VehicleData::query()->find($data['id'])], 'SUCCESS');
     }
     public function destroy(Request $request, $device_id){
         $car = VehicleData::query()->where('id',$device_id)->delete();
