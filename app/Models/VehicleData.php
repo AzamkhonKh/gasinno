@@ -11,7 +11,7 @@ class VehicleData extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected array $fillable = [
+    protected $fillable = [
         "owner_id",
         "balloon_volume",
         "car_number",
