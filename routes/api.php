@@ -5,8 +5,6 @@ use App\Http\Controllers\API\DriverController;
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\GeoController;
 use App\Http\Controllers\UserController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,11 +26,11 @@ Route::middleware('GeoMiddleware')->group(function () {
 });
 
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('/device', DeviceController::class,['except'=>['index']]);        
 
     Route::group(['prefix' => 'device','middleware' => ['isOwnerOrAdmin']],function(){
+        Route::apiResource('/crud', DeviceController::class,['except'=>['index']]);        
         
-        Route::get('/paginate', [DeviceController::class, 'request_geo']);
+        Route::get('/paginate', [DeviceController::class, 'request_geo'])->name('device.paginate');
         Route::get('/paginate-supply', [DeviceController::class, 'paginate_supply']);
         Route::get('/driver', [DeviceController::class, 'getDeviceDriver']);
         Route::get('/gas', [DeviceController::class, 'gasStatistics']);
@@ -45,8 +43,8 @@ Route::middleware('auth:api')->group(function () {
                 ->middleware('isAdmin');
     });
 
-    Route::apiResource('/driver', DriverController::class,['except'=>['index']]);
     Route::group(['prefix' => 'driver'],function(){
+        Route::apiResource('/driver/crud', DriverController::class,['except'=>['index']]);
         Route::post('/assign', [DriverController::class, 'assign_driver']);
     });
     
