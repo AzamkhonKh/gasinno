@@ -58,7 +58,7 @@ class VehicleData extends Model
         $query = VehicleData::query();        
         $query->select('dd.*');
         $query->join('driver_car_relations as dcr',function($join){
-            $join->on('dcr.vehicle_id','=',$this->id);
+            $join->on('dcr.vehicle_id','=','vehicle_data.id')->where('vehicle_data.id',$this->id);
         });
         $query->join('driver_data as dd','dd.id','dcr.driver_id');
         $query->orderBy('dcr.id','desc');
