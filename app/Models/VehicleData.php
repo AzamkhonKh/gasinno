@@ -11,7 +11,7 @@ class VehicleData extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+    protected array $fillable = [
         "owner_id",
         "balloon_volume",
         "car_number",
@@ -36,7 +36,7 @@ class VehicleData extends Model
     ];
 
     protected $with = ['current_rs'];
-    protected $appends = ['api_token'];
+    protected $appends = ['api_token','driver'];
 
 
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -55,11 +55,13 @@ class VehicleData extends Model
     }
     public function getDriverAttribute()
     {
+        return $this->driver_q()->latest() ?? null;
+    }
+
+    public function driver_q(){
         return DriverData::query()
-                ->where('id',
-                            DriverCarRelation::query()
-                                ->where('vehicle_id',$this->id)->latest()->driver_id ?? null)
-                ->latest();
+        ->where('id',
+            DriverCarRelation::query()->where('vehicle_id',$this->id)->latest() ?? null);
     }
 
     public function getapiTokenAttribute(){
