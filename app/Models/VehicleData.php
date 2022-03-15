@@ -55,15 +55,14 @@ class VehicleData extends Model
     }
     public function getDriverAttribute()
     {
-        return $this->driver_q()->latest() ?? null;
+        $query = self::query();        
+        $query->select('dd.*');
+        $query->join('driver_car_relations as dcr','dcr.vehicle_id',$this->id);
+        $query->join('driver_data as dd','dd.id','dcr.driver_id');
+        $query->orderBy('dcr.id','desc');
+    
+        return $query->first();
     }
-
-    public function driver_q(){
-        return DriverData::query()
-        ->where('id',
-            DriverCarRelation::query()->where('vehicle_id',$this->id)->latest() ?? null);
-    }
-
     public function getapiTokenAttribute(){
         return auth()->check() && auth()->user()->checkRole('administrator') ? $this->token : null;
     }
