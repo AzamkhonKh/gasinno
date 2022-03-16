@@ -36,7 +36,7 @@ class VehicleData extends Model
     ];
 
     protected $with = ['current_rs'];
-    protected $appends = ['api_token'];
+    protected $appends = ['api_token','driver'];
 
 
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -55,13 +55,16 @@ class VehicleData extends Model
     }
     public function getDriverAttribute()
     {
-        return DriverData::query()
-                ->where('id',
-                            DriverCarRelation::query()
-                                ->where('vehicle_id',$this->id)->latest()->driver_id ?? null)
-                ->latest();
+        $query = VehicleData::query();        
+        $query->select('dd.*');
+        $query->join('driver_car_relations as dcr',function($join){
+            $join->on('dcr.vehicle_id','=','vehicle_data.id')->where('vehicle_data.id',$this->id);
+        });
+        $query->join('driver_data as dd','dd.id','dcr.driver_id');
+        $query->orderBy('dcr.id','desc');
+    
+        return $query->first();
     }
-
     public function getapiTokenAttribute(){
         return auth()->check() && auth()->user()->checkRole('administrator') ? $this->token : null;
     }
