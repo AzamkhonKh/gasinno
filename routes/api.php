@@ -29,7 +29,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::group(['prefix' => 'device','middleware' => ['isOwnerOrAdmin']],function(){
         Route::apiResource('/crud', DeviceController::class,['except'=>['index']]);        
-
+        Route::get('/current_rs/{id}', [DeviceController::class, 'current_relay_state']);
         Route::get('/paginate', [DeviceController::class, 'request_geo'])->name('device.paginate');
         Route::get('/paginate-supply', [DeviceController::class, 'paginate_supply']);
         Route::get('/driver', [DeviceController::class, 'getDeviceDriver']);

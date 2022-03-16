@@ -204,6 +204,11 @@ class DeviceController extends Controller
         }
         return ApiWrapper::sendResponse(['data'=>$data,'mode' => print_r($mode,1), "start_time" => $start_time,'end_time' => $end_time], $message);
     }
+    public function current_relay_state($id){
+        $data = GISdata::query()->where('vehicle_id',$id)->orderByDesc('id')->select(['relay_state','datetime'])->first();
+        $msg = 'SUCCESS';
+        return ApiWrapper::sendResponse(['device_data' => $data], $msg);
+    }
 
     public function getQRCode($id)
     {
