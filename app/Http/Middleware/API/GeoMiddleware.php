@@ -23,10 +23,8 @@ class GeoMiddleware
         $model = VehicleData::find(intval($device_id));
         if (empty($model) || !isset($model->token)) $abort = true;
         $token = $request->has('device_token') ? $request->input('device_token') : null;
-//        dd(['device' => $device_id, 'token' => $token, 'abort' => $abort,'model' => $model]);
         if ($abort || empty($token)) abort(400);
-
-        if (Hash::check($token,$model->token))
+        if ($token == $model->token)
             return $next($request);
         else
             abort(403);
