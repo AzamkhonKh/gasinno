@@ -70,6 +70,18 @@ class DeviceController extends Controller
         return ApiWrapper::sendResponse($res, $msg);
     }
 
+    public function notification(){
+        $date_expire = now()->addDays(5)->toDateTimeString();
+        $device = VehicleData::query()
+                        ->where('owner_id',auth()->id())
+                        ->where('texosmotr_valid_till','<=',$date_expire)
+                        ->where('strxovka_valid_till','<=',$date_expire)
+                        ->where('tonirovka_valid_till','<=',$date_expire)
+                        ->where('doverenost_valid_till','<=',$date_expire)
+                        ->get();
+        return ApiWrapper::sendResponse(['data' => $device], 'SUCCESS');
+        
+    }
     public function getDriver($id): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();
