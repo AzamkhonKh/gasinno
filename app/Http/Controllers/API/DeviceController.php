@@ -74,10 +74,13 @@ class DeviceController extends Controller
         $date_expire = now()->addDays(5)->toDateTimeString();
         $device = VehicleData::query()
                         ->where('owner_id',auth()->id())
-                        ->where('texosmotr_valid_till','<=',$date_expire)
-                        ->where('strxovka_valid_till','<=',$date_expire)
-                        ->where('tonirovka_valid_till','<=',$date_expire)
-                        ->where('doverenost_valid_till','<=',$date_expire)
+                        ->where(function($q) use ($date_expire){
+                            $q
+                            ->where('texosmotr_valid_till','<=',$date_expire)
+                            ->orWhere('strxovka_valid_till','<=',$date_expire)
+                            ->orWhere('tonirovka_valid_till','<=',$date_expire)
+                            ->orWhere('doverenost_valid_till','<=',$date_expire);
+                        })
                         ->get();
         return ApiWrapper::sendResponse(['data' => $device], 'SUCCESS');
         
