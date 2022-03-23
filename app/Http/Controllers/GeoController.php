@@ -9,6 +9,7 @@ use App\Models\GISdata;
 use App\Models\IntegrationLog;
 use App\Models\IPData;
 use App\Models\GasSuplliedData;
+use App\Http\Requests\GetRelayStateRequest;
 
 class GeoController extends Controller
 {
@@ -82,6 +83,41 @@ class GeoController extends Controller
         IntegrationLog::log($request, [$res, $msg]);
 
         return ApiWrapper::sendResponse($res, $msg);
+    }
+    public function get_geo_stopped(GetRelayStateRequest $request): \Illuminate\Http\JsonResponse
+    {
+//        DB::beginTransaction();
+        try {
+            $device_id = $request->input("device_id");
+            $asyn_mode = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', false);
+            $actions = $asyn_mode->count();
+            $gis = GISdata::query()->where('vehicle_id',$device_id)->update([
+                'relay_state' => $request->input('relay_state')
+            ]);
+
+            if ($actions > 0) {
+                $action = $asyn_mode->orderBy('id','asc')->first(); // last uncompleted action such as if first off and another on so it will complete first off and after that on
+                $msg = $action->command_int == 1 ? "TURNOFF" : "TURNON";
+                $res = ["message" => $msg];
+                $action->update([
+                    'completed' => true
+                ]);
+            } else {
+                $res = ["gis" => $gis];
+                $msg = "SUCCESS";
+            }
+            $relay_state = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', true)->first();
+            $relay_state_msg = !empty($relay_state) ? isset($action) && $action->command_int == 1 ? "TURNOFF" : "TURNON" : "TURNON";
+        } catch (\Exception $e) {
+//            DB::rollBack();
+            $res = ["message" => $e->getMessage()];
+            $msg = "ERROR";
+            $relay_state_msg = "ERROR";
+        }
+//        DB::commit();
+        IntegrationLog::log($request, [$res, $msg]);
+
+        return ApiWrapper::sendResponse($res, $msg,201,$relay_state_msg);
     }
 
 

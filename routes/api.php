@@ -23,6 +23,7 @@ Route::post('/login', [RegisterController::class, 'login']);
 Route::middleware('GeoMiddleware')->group(function () {
     Route::get('/geo-data', [GeoController::class, 'get_geo']);
     Route::get('/geo-data-supply', [GeoController::class, 'get_supply_geo']);
+    Route::get('/geo-data-stopped', [GeoController::class, 'get_geo_stopped']);
 });
 
 Route::middleware('auth:api')->group(function () {
