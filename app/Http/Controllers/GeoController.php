@@ -91,7 +91,7 @@ class GeoController extends Controller
             $device_id = $request->input("device_id");
             $asyn_mode = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', false);
             $actions = $asyn_mode->count();
-            $gis = GISdata::query()->where('vehicle_id',$device_id)->update([
+            $gis = GISdata::query()->where('vehicle_id',$device_id)->limit(1)->orderBy('id','desc')->update([
                 'relay_state' => $request->input('relay_state')
             ]);
 
@@ -103,7 +103,7 @@ class GeoController extends Controller
                     'completed' => true
                 ]);
             } else {
-                $res = ["gis" => $gis];
+                $res = ["relay_state" => $request->input('relay_state')];
                 $msg = "SUCCESS";
             }
             $relay_state = asyncActions::query()->where("vehicle_id", $device_id)->where('completed', true)->first();
