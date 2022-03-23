@@ -37,6 +37,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/gas', [DeviceController::class, 'gasStatistics']);
         Route::get('/gas-supply', [DeviceController::class, 'gasSupplyStatistics']);
         Route::get('/log', [DeviceController::class, 'show_device_log']);
+        Route::get('/notification', [DeviceController::class, 'notification']);
         Route::post('/turnoff_on', [DeviceController::class, 'turnOffDevice']);
         
         Route::post('/assign', [DeviceController::class, 'assign_device']);
